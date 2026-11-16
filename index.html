@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Strayline · Catching the attacks nobody has seen yet</title>
+<meta name="description" content="Strayline is a hybrid AI detector that flags network traffic straying from the normal line, and shows defenders exactly where it can and can't be trusted.">
+<meta name="theme-color" content="#F3EEE3">
+<link rel="icon" href="assets/mark.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<nav class="nav" id="nav">
+  <a class="brand" href="#top" aria-label="Strayline home">
+    <svg viewBox="70 80 380 300" aria-hidden="true"><path d="M88 300 C150 230 200 230 256 300 S362 370 424 300" fill="none" stroke="#2F6DB5" stroke-width="30" stroke-linecap="round"/><line x1="360" y1="206" x2="360" y2="318" stroke="#C8423B" stroke-width="7" stroke-linecap="round" stroke-dasharray="1 15"/><circle cx="360" cy="150" r="52" fill="none" stroke="#C8423B" stroke-width="10"/><circle cx="360" cy="150" r="34" fill="#E5534B"/></svg>
+    <span>Strayline</span>
+  </a>
+  <div class="nav-links">
+    <a href="#s1">How it moves</a>
+    <a href="#console">Console</a>
+    <a href="#map">Catchability map</a>
+    <a href="#how">How it works</a>
+    <a href="#team">Team</a>
+    <a class="btn btn-sm" data-contact href="#contact">Pilot it</a>
+  </div>
+</nav>
+
+<main id="top">
+
+<!-- ───────── The film: one sticky canvas, six scenes ───────── -->
+<section class="film" id="film" aria-label="Strayline in motion">
+  <div class="stage">
+    <canvas id="stage" aria-hidden="true"></canvas>
+    <div class="stage-shade" aria-hidden="true"></div>
+    <p class="hint" id="hint"></p>
+    <div class="rail"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+  </div>
+
+  <div class="steps">
+    <div class="step hero" id="s0">
+      <div class="hero-copy">
+        <p class="eyebrow">Strayline · beta</p>
+        <h1>Catching the attacks nobody has seen&nbsp;yet.</h1>
+        <p class="lede">A hybrid AI detector that flags network traffic straying from the normal line, and shows defenders exactly where it can and can't be trusted.</p>
+        <div class="cta-row">
+          <a class="btn" href="#s1">Watch it work</a>
+          <a class="btn btn-ghost" href="#console">Open the console</a>
+        </div>
+        <p class="fine">Live and touchable. Driven by real replay results on public lab traffic.</p>
+      </div>
+      <a class="scroll-cue" href="#s1" aria-label="Scroll"><span></span></a>
+    </div>
+
+    <div class="step" id="s1">
+      <article class="card">
+        <p class="eyebrow">01 · The problem</p>
+        <h2>The attack that hurts most is the one nobody has seen before.</h2>
+        <p>Most AI security tools only recognize attacks they were trained on. Known attacks get stopped at the gate. New ones walk straight through.</p>
+        <ul class="legend">
+          <li><i class="k-known"></i>known attack, caught</li>
+          <li><i class="k-stray"></i>never-seen attack, missed</li>
+        </ul>
+      </article>
+    </div>
+
+    <div class="step" id="s2">
+      <article class="card">
+        <p class="eyebrow">02 · Two models, one line</p>
+        <h2>One model learns the attacks we know. The other learns only what normal looks like.</h2>
+        <p>The classifier catches known families. The autoencoder flags anything that strays from normal traffic, whether or not it has a name.</p>
+        <p class="dim">Some attacks hug the line and slip past both. So we measure exactly which.</p>
+      </article>
+    </div>
+
+    <div class="step" id="s3">
+      <article class="card">
+        <p class="eyebrow">03 · The flood</p>
+        <p class="big"><b id="cnt-alerts">0</b></p>
+        <h2>detector alerts from 108,700 flows.</h2>
+        <p>One replayed day of traffic, with port scans hidden from training, at a 1% false-alarm budget. No analyst can read this.</p>
+      </article>
+    </div>
+
+    <div class="step" id="s4">
+      <article class="card">
+        <p class="eyebrow">04 · Structure first</p>
+        <p class="big"><b>414</b></p>
+        <h2>incidents.</h2>
+        <p>Plain code groups alerts by host pair and time. No AI yet, just structure. Each cluster on screen is one real incident from the replay.</p>
+      </article>
+    </div>
+
+    <div class="step" id="s5">
+      <article class="card">
+        <p class="eyebrow">05 · Agents cut the noise</p>
+        <p class="big"><b>55</b> <span class="ok">8 / 8</span></p>
+        <h2>escalated, with every real attack at top priority.</h2>
+        <p>A triage agent reads every incident: 205 dismissed, 154 monitored, 55 escalated. Both never-seen port scans were named correctly, though the classifier had called them normal.</p>
+        <p class="dim">47 of the 55 escalations were false alarms. Agents saw anonymized hosts and no labels.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ───────── Live console ───────── -->
+<section class="sec" id="console">
+  <header class="sec-head reveal">
+    <p class="eyebrow">The product, in motion</p>
+    <h2>The short list an analyst actually reads.</h2>
+    <p>A concept console replaying the real Friday run on a loop. Every incident card, triage decision and investigator report below is what the agents actually wrote. Click any incident to inspect it.</p>
+  </header>
+
+  <div class="con reveal" id="con">
+    <div class="con-bar">
+      <span class="dots"><i></i><i></i><i></i></span>
+      <strong>Strayline Console</strong>
+      <span class="tag">concept</span>
+      <span class="tag tag-blue">replay · Friday · port scans unseen · 1% false alarms</span>
+      <span class="clock" id="con-clock">13:48:41</span>
+    </div>
+    <div class="con-stats" id="con-stats"></div>
+    <div class="con-body">
+      <div class="con-queue">
+        <div class="pane-head"><span>Incident queue</span><span id="q-count">0 / 414</span></div>
+        <ol id="q"></ol>
+      </div>
+      <div class="con-detail" id="detail" aria-live="off"></div>
+    </div>
+    <div class="con-foot">
+      <div class="prog"><i id="con-prog"></i></div>
+      <span id="con-status">replaying</span>
+      <button class="link" id="con-toggle" type="button">Pause</button>
+    </div>
+  </div>
+  <p class="fine center">Hosts are pseudonymized. Ground truth was joined only after the agents finished.</p>
+</section>
+
+<!-- ───────── Catchability map ───────── -->
+<section class="sec" id="map">
+  <header class="sec-head reveal">
+    <p class="eyebrow">The catchability map</p>
+    <h2>Where to trust it, and where you still need a human.</h2>
+    <p>Hide an entire attack family during training, then test whether it is still caught. Each cell is the share of a never-seen family detected at a 1% false-alarm rate.</p>
+  </header>
+
+  <div class="map-wrap reveal">
+    <div class="grid" id="grid" role="table" aria-label="Catchability map"></div>
+    <p class="fine" id="map-note"></p>
+  </div>
+
+  <header class="sec-head sub reveal">
+    <h3>The false-alarm budget is a cliff.</h3>
+    <p>Allow 5% false alarms instead of 1% and unseen port scans go from about a third caught to nearly all. DoS and botnets stay mostly invisible either way.</p>
+  </header>
+
+  <div class="budget reveal" id="budget">
+    <div class="budget-ctl">
+      <label for="fpr">False-alarm budget</label>
+      <input id="fpr" type="range" min="0" max="3" step="1" value="1" aria-describedby="fpr-val">
+      <output id="fpr-val">1%</output>
+    </div>
+    <div class="bars" id="bars"></div>
+    <ul class="legend inline">
+      <li><i class="k-ae"></i>autoencoder (learns normal)</li>
+      <li><i class="k-clf"></i>classifier (learns known attacks)</li>
+    </ul>
+  </div>
+
+  <header class="sec-head sub reveal">
+    <h3>Does it carry to a different network?</h3>
+    <p>Not on its own. Trained on the 2017 network and pointed at a 2018 network it had never seen, the alert lines broke, and the model of "normal" did not transfer. Strayline has to learn each network's own normal traffic, which is why the next step is a real pilot.</p>
+  </header>
+  <div class="xnet reveal">
+    <div>
+      <p class="d-h">False alarms on the new network · target 1%</p>
+      <table>
+        <thead><tr><th></th><th>2017 alert lines reused</th><th>Re-set on 2018 normal traffic</th></tr></thead>
+        <tbody>
+          <tr><th>Classifier</th><td class="bad">6.5%</td><td>1.1%</td></tr>
+          <tr><th>Autoencoder</th><td class="bad">33.0%</td><td>1.2%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div>
+      <p class="d-h">Attacks caught after re-setting · 1% false alarms</p>
+      <table>
+        <thead><tr><th></th><th>Classifier</th><th>Autoencoder</th></tr></thead>
+        <tbody>
+          <tr><th>Port scan</th><td>86.6%</td><td class="bad">2.1%</td></tr>
+          <tr><th>Six other families</th><td class="bad">under 7%</td><td class="bad">under 1%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="fine">Trained on improved CIC-IDS2017, tested on CSE-CIC-IDS2018, mean of 3 seeds; here the classifier had seen every attack type in training. Both datasets are lab testbeds. Trained inside the 2018 network instead, the autoencoder caught 76% of never-seen infiltration and 69% of never-seen web attacks (5 seeds).</p>
+  </div>
+</section>
+
+<!-- ───────── How it works ───────── -->
+<section class="sec" id="how">
+  <header class="sec-head reveal">
+    <p class="eyebrow">How it works</p>
+    <h2>A cheap detector on every flow. Agents only on incidents.</h2>
+  </header>
+  <ol class="pipe reveal">
+    <li><h4>Traffic</h4><p>82 flow statistics per connection. No IP addresses, no payloads.</p></li>
+    <li><h4>Detector</h4><p>A classifier for known attacks plus an autoencoder for anything unusual. The alert threshold is your false-alarm budget.</p></li>
+    <li><h4>Agents</h4><p>Triage reads every incident. An investigator writes the case report with read-only tools, and is allowed to say "novel, unknown".</p></li>
+    <li><h4>Analyst</h4><p>A few cases a day, not 50,000 alerts, plus a map of what the system catches and misses.</p></li>
+  </ol>
+
+  <div class="limits reveal">
+    <h3>What this is, honestly</h3>
+    <ul>
+      <li>Results come from the improved CIC-IDS2017 dataset: more than two million flows from a 2017 lab testbed, not live traffic.</li>
+      <li>Infiltration (36 flows) and web attack (104 flows) are tiny families. Treat their rates as indicative only.</li>
+      <li>Hiding one family at a time only tests attacks that already exist in the data.</li>
+      <li>The triage prompt was revised once after an earlier Friday run, so Friday is not a fully untouched test.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="sec" id="team">
+  <header class="sec-head reveal">
+    <p class="eyebrow">Team</p>
+    <h2>One founder, so far.</h2>
+  </header>
+  <div class="team reveal">
+    <img class="avatar" src="assets/kyle-robin.jpg" alt="Kyle Robin" width="132" height="132">
+    <div class="bio">
+      <h3>Kyle Robin</h3>
+      <p class="role">Founder · research and engineering</p>
+      <p>Sophomore at Bates College studying Digital and Computational Studies, and lead of AI research in Professor Jason Castro's lab. Designed and built Strayline's detectors, the leave-one-family-out experiments behind the catchability map, and the agent layer.</p>
+      <div class="cta-row">
+        <a class="btn" href="https://www.linkedin.com/in/kyle-robin-931415425" target="_blank" rel="noopener">LinkedIn</a>
+        <a class="btn btn-ghost" href="https://krobin2005.github.io/myportfolio" target="_blank" rel="noopener">Portfolio</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec cta" id="contact">
+  <div class="reveal">
+    <h2>Pilot Strayline.</h2>
+    <p>Next comes traffic from other networks, and real analysts. If you run a security team or build for one, I'd like to test it with you.</p>
+    <a class="btn" data-contact href="#">Get in touch</a>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <span>Strayline (beta) · built by Kyle Robin, Bates College</span>
+  <span>Catching the attacks nobody has seen yet.</span>
+</footer>
+
+<script src="data/replay.js"></script>
+<script src="js/stream.js"></script>
+<script src="js/console.js"></script>
+<script src="js/map.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
