@@ -296,3 +296,4 @@ html, body { overflow-x: clip; }
   .sec-head h2 { font-size: 30px; } .cta h2 { font-size: 44px; }
   .foot { flex-direction: column; }
 }
+@media (max-width: 979px) { .stage-shade { background: linear-gradient(180deg, rgba(243,238,227,.7) 0%, rgba(243,238,227,0) 14%); } }
