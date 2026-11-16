@@ -53,8 +53,9 @@
       const dx = e.clientX - px, dy = e.clientY - py; px = e.clientX; py = e.clientY; moved += Math.abs(dx) + Math.abs(dy);
       this.velY = -dx * 0.0032; this.velP = dy * 0.0028; this.orbY += this.velY; this.orbP += this.velP;
     });
-    c.addEventListener('pointerup', () => { if (!this.drag) return; this.drag = false; if (moved < 6) this.tap(); });
-    c.addEventListener('pointercancel', () => { this.drag = false; });
+    const release = (e) => { if (e.pointerType !== 'mouse') { this.hov = false; this.mx = this.my = -999; } };
+    c.addEventListener('pointerup', (e) => { if (!this.drag) return; this.drag = false; if (moved < 6) this.tap(); release(e); });
+    c.addEventListener('pointercancel', (e) => { this.drag = false; release(e); });
     c.addEventListener('pointerleave', () => { if (!this.drag) this.hov = false; });
   };
 
@@ -71,8 +72,10 @@
 
   Film.prototype.resize = function () {
     const r = this.c.getBoundingClientRect();
-    const W = (this.W = Math.max(320, r.width)), H = (this.H = Math.max(320, r.height));
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const W = Math.max(320, Math.round(r.width)), H = Math.max(320, Math.round(r.height));
+    if (W === this.W && H === this.H) return;
+    this.W = W; this.H = H;
+    const dpr = Math.min(window.devicePixelRatio || 1, W < 980 ? 1.75 : 2);
     this.c.width = Math.round(W * dpr); this.c.height = Math.round(H * dpr);
     this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     const nar = (this.narrow = W < 980);
@@ -240,8 +243,8 @@
       for (let j = 0; j <= n; j++) { if (fn(j / n)) { if (pen) ctx.lineTo(PX, PY); else ctx.moveTo(PX, PY); pen = true; } else pen = false; }
     };
     // a lit, filled mesh that turns red-hot where traffic strays
-    const GXN = 60, GZN = 16, row = GXN + 1;
-    if (!this.gp) { const n = row * (GZN + 1); this.gp = { x: new Float32Array(n), y: new Float32Array(n), h: new Float32Array(n), ht: new Float32Array(n), ok: new Uint8Array(n) }; }
+    const GXN = nar ? 40 : 60, GZN = nar ? 12 : 16, row = GXN + 1;
+    if (!this.gp) { const n = 61 * 17; this.gp = { x: new Float32Array(n), y: new Float32Array(n), h: new Float32Array(n), ht: new Float32Array(n), ok: new Uint8Array(n) }; }
     const gp = this.gp;
     for (let iz = 0, n = 0; iz <= GZN; iz++) {
       const z = -Z + (2 * Z * iz) / GZN;

@@ -268,3 +268,31 @@ b, strong { font-weight: 700; }
 .bio .cta-row { margin-top: 8px; }
 @media (max-width: 600px) { .team { grid-template-columns: 1fr; gap: 18px; } .avatar { width: 88px; height: 88px; font-size: 30px; } }
 img.avatar { display: block; object-fit: cover; background: #000; box-shadow: 0 0 0 6px rgba(14,17,22,.08); }
+
+/* phones and tablets: steadier scrolling and layouts that fit */
+html, body { overflow-x: clip; }
+@media (max-width: 979px), (pointer: coarse) {
+  html { scroll-snap-type: none; }
+  .step { scroll-snap-align: none; }
+  .card, .nav.solid { backdrop-filter: none; -webkit-backdrop-filter: none; }
+  .card { background: rgba(255,255,255,.96); }
+  .nav.solid { background: rgba(243,238,227,.97); }
+  .stage { height: 100vh; height: 100lvh; }
+  .steps { margin-top: -100vh; margin-top: -100lvh; }
+  .step { height: 100vh; height: 100lvh; padding-bottom: calc(5vh + env(safe-area-inset-bottom, 0px) + (100lvh - 100svh)); }
+  .step.hero { padding-bottom: 0; }
+}
+@media (max-width: 600px) {
+  .map-wrap { overflow-x: visible; }
+  .grid { min-width: 0; grid-template-columns: 78px repeat(4, minmax(0, 1fr)); gap: 3px; }
+  .grid .h { font-family: var(--sans); font-size: 8.5px; letter-spacing: 0; padding: 2px 1px 8px; }
+  .grid .f { font-size: 13px; padding: 0 2px; } .grid .f small { font-size: 9px; }
+  .cell { height: 48px; font-size: 13px; }
+  .brow { grid-template-columns: 82px 1fr 50px; gap: 8px; } .brow .nm { font-size: 13px; }
+  .budget-ctl output { font-size: 28px; min-width: 70px; }
+  .xnet td { font-size: 15px; } .xnet thead th { font-size: 9px; }
+  .con-bar .tag-blue { display: none; }
+  .hint { max-width: 62vw; line-height: 1.5; }
+  .sec-head h2 { font-size: 30px; } .cta h2 { font-size: 44px; }
+  .foot { flex-direction: column; }
+}

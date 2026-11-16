@@ -16,7 +16,9 @@
   const HINTS = ['Drag to orbit · touch the surface · click to launch an attack', 'Click the surface: launch an attack at the gate', 'Click the surface: see which detector catches it',
     'Drag to orbit the alert cloud', 'Hover a cluster: each one is a real incident', 'Click a cluster to open it in the console'];
   rail.forEach((el, i) => el.addEventListener('click', () => window.scrollTo({ top: filmEl.offsetTop + i * vh, behavior: 'smooth' })));
-  let vh = window.innerHeight, filmVisible = true, last = 0, raf = 0;
+  const stageBox = document.querySelector('.stage');
+  // scene height = the sticky stage's height (stable on phones; innerHeight changes as the address bar hides)
+  let vh = stageBox.clientHeight || window.innerHeight, vw = window.innerWidth, filmVisible = true, last = 0, raf = 0;
 
   function progress() {
     const top = filmEl.getBoundingClientRect().top;
@@ -39,9 +41,20 @@
 
   new IntersectionObserver((e) => { filmVisible = e[0].isIntersecting; if (filmVisible) kick(); }).observe(filmEl);
   document.addEventListener('visibilitychange', kick);
-  window.addEventListener('scroll', () => { if (!filmVisible) progress(); }, { passive: true });
-  window.addEventListener('resize', () => { vh = window.innerHeight; film.resize(); progress(); });
+  // never rely on one signal to keep the scene alive: scroll, touch and a watchdog all restart it
+  const onScreen = () => { const r = filmEl.getBoundingClientRect(); return r.bottom > 0 && r.top < window.innerHeight; };
+  const wake = () => { filmVisible = onScreen(); if (filmVisible) kick(); else progress(); };
+  window.addEventListener('scroll', wake, { passive: true });
+  window.addEventListener('pageshow', wake);
+  window.addEventListener('touchstart', wake, { passive: true });
+  setInterval(() => { if (!raf && !document.hidden && onScreen()) { filmVisible = true; kick(); } }, 1000);
+  window.addEventListener('resize', () => {
+    if (window.innerWidth === vw && window.innerWidth < 980) return;   // address bar only: nothing to redo
+    vw = window.innerWidth; vh = stageBox.clientHeight || window.innerHeight; film.resize(); progress();
+  });
+  window.addEventListener('orientationchange', () => setTimeout(() => { vw = window.innerWidth; vh = stageBox.clientHeight || window.innerHeight; film.resize(); progress(); }, 250));
   const stage = $('stage');
+  progress(); film.frame(0.016);   // draw the first frame immediately so the hero is never blank
   kick();
 
   const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: 0.12 });
