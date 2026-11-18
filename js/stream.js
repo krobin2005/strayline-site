@@ -2,7 +2,8 @@
    World: x = direction of flow, z = depth, y = up. Normal traffic is a flowing surface;
    strays lift off it. Scroll position p in [0, 5] moves the camera and morphs the particles:
    0 hero · 1 known-attack gate · 2 two detectors · 3 alert flood · 4 414 incidents · 5 triage tiers
-   Cluster sizes and triage tiers come from the real replay (window.STRAYLINE_DATA). */
+   Cluster sizes and triage tiers come from the real v1 run (window.STRAYLINE_DATA): every incident sent to
+   the AI plus a sample of those the ranking held back. */
 (function () {
   'use strict';
   const SL = (window.SL = window.SL || {});
@@ -10,7 +11,8 @@
 
   const INK = [52, 60, 74], RED = [217, 72, 63], BLUE = [47, 109, 181], GREY = [164, 170, 180], AMBER = [176, 116, 24];
   const GREEN = '#117A5F', CREAM = [255, 248, 236];
-  const DEC = { dismiss: 0, monitor: 1, escalate: 2 }, DEC_RGB = [GREY, BLUE, RED];
+  // tiers: held back by the ranking (never sent to the AI) · reviewed by the triage agent · escalated
+  const DEC = { held: 0, dismiss: 1, monitor: 1, escalate: 2 }, DEC_RGB = [GREY, BLUE, RED];
   const BEHAV = ['novel_unknown', 'port_scan', 'botnet_c2', 'infiltration_lateral', 'brute_force', 'web_attack', 'dos_flood'];
   const X = 10, Z = 3.2, XS = 11.5, PLANE = 2.7, GY = [1.3, 2.7, 4.3], GATE_A = -0.8, GATE_B = 3.2;
   const SANS = '"Helvetica Neue", Helvetica, Arial, sans-serif', MONO = 'ui-monospace, "SF Mono", Menlo, monospace';
@@ -102,7 +104,7 @@
 
   Film.prototype.build = function (N) {
     this.N = N;
-    const A = (this.A = Math.round(N * (D.funnel.alerts / D.funnel.flows)));
+    const A = (this.A = Math.round(N * (D.film_alert_share || D.funnel.alerts / D.funnel.flows)));
     const f32 = () => new Float32Array(N);
     const u0 = (this.u0 = f32()), sp = (this.sp = f32()), zp = (this.zp = f32()), dev = (this.dev = f32()), adev = (this.adev = f32()),
       ox = (this.ox = f32()), oy = (this.oy = f32()), oz = (this.oz = f32()), al = (this.al = f32()), jy = (this.jy = f32());
@@ -145,7 +147,7 @@
     this.g4x = new Float32Array(M); this.g4z = new Float32Array(M); this.g5x = new Float32Array(M); this.g5z = new Float32Array(M);
     this.R4 = { x0: -6.3, x1: 6.3, z0: -Z * 0.95, z1: Z * 0.95 };
     place(all, this.R4, this.g4x, this.g4z, 0.5, 1);
-    const F = D.funnel, xr = [[-6.6, -2.0], [-1.4, 2.6], [3.2, 6.6]], nm = [[F.dismissed, 'dismissed'], [F.monitor, 'monitor'], [F.escalated, 'escalated']];
+    const F = D.funnel, xr = [[-6.6, -2.0], [-1.4, 2.6], [3.2, 6.6]], nm = [[F.held, 'held back by ranking'], [F.reviewed, 'reviewed by AI'], [F.escalated, 'escalated']];
     this.groups = xr.map((r, g) => {
       const plain = all.filter((j) => this.dec[j] === g && !this.atk[j]), hot = all.filter((j) => this.dec[j] === g && this.atk[j]);
       const list = plain.slice();   // spread the real attacks through their tier
@@ -408,9 +410,9 @@
         const r = D.incidents[this.pick];
         el.textContent = '';
         const add = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; n.textContent = text; el.appendChild(n); };
-        add('b', '', r.id); add('span', 'badge ' + r.dec, r.dec + (r.dec === 'escalate' ? ' · p' + r.pri : ''));
+        add('b', '', r.id); add('span', 'badge ' + r.dec, (r.dec === 'held' ? 'held back' : r.dec) + (r.dec === 'escalate' ? ' · p' + r.pri : ''));
         add('p', '', r.src + ' → ' + r.dst); add('p', '', r.flows.toLocaleString('en-US') + ' alerted flows · ' + r.sus);
-        add('small', '', 'Click to open in the console');
+        if (r.dec !== 'held') add('small', '', 'Click to open in the console');
       }
     }
     this.c.style.cursor = this.pick >= 0 ? 'pointer' : this.drag ? 'grabbing' : 'grab';
@@ -471,10 +473,11 @@
         const lx = PX, ly = PY + 20;
         ctx.globalAlpha = a5;
         ctx.font = '700 15px ' + SANS; ctx.fillStyle = k === 0 ? '#5B6470' : rgb(g.c, g.c, 0);
-        ctx.fillText(String(g.n), lx, ly);
-        const nw = ctx.measureText(String(g.n)).width;
+        const gn = g.n.toLocaleString('en-US');
+        ctx.fillText(gn, lx, ly);
+        const nw = ctx.measureText(gn).width;
         ctx.font = '13px ' + SANS; ctx.fillStyle = '#5B6470'; ctx.fillText(g.label, lx + nw + 6, ly);
-        if (k === 2) { ctx.fillStyle = GREEN; ctx.font = '700 12px ' + SANS; ctx.fillText('○ ' + D.funnel.attacks_escalated + ' / ' + D.funnel.attacks + ' real attacks', lx, ly + 17); }
+        if (k === 2) { ctx.fillStyle = GREEN; ctx.font = '700 12px ' + SANS; ctx.fillText('○ ' + D.funnel.attacks_escalated + ' / ' + D.funnel.attacks + ' real intrusion', lx, ly + 17); }
       });
       ctx.globalAlpha = 1;
     }

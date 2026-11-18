@@ -68,7 +68,7 @@
       <article class="card">
         <p class="eyebrow">02 · Two models, one line</p>
         <h2>One model learns the attacks we know. The other learns only what normal looks like.</h2>
-        <p>The classifier catches known families. The autoencoder flags anything that strays from normal traffic, whether or not it has a name.</p>
+        <p>The classifier catches known families. Anomaly detectors learn what normal looks like on <em>your</em> network, from your own logs, and flag anything that strays from it, whether or not it has a name.</p>
         <p class="dim">Some attacks hug the line and slip past both. So we measure exactly which.</p>
       </article>
     </div>
@@ -77,27 +77,27 @@
       <article class="card">
         <p class="eyebrow">03 · The flood</p>
         <p class="big"><b id="cnt-alerts">0</b></p>
-        <h2>detector alerts from 108,700 flows.</h2>
-        <p>One replayed day of traffic, with port scans hidden from training, at a 1% false-alarm budget. No analyst can read this.</p>
+        <h2>detector alerts from 6,551,388 connections.</h2>
+        <p>One full day on a network Strayline was never trained on, at a 2% false-alarm budget. Still far more than any analyst can read.</p>
       </article>
     </div>
 
     <div class="step" id="s4">
       <article class="card">
         <p class="eyebrow">04 · Structure first</p>
-        <p class="big"><b>414</b></p>
+        <p class="big"><b>1,251</b></p>
         <h2>incidents.</h2>
-        <p>Plain code groups alerts by host pair and time. No AI yet, just structure. Each cluster on screen is one real incident from the replay.</p>
+        <p>Plain code groups alerts per source host and time. No AI yet, just structure. Each cluster on screen is one real incident from that day.</p>
       </article>
     </div>
 
     <div class="step" id="s5">
       <article class="card">
-        <p class="eyebrow">05 · Agents cut the noise</p>
-        <p class="big"><b>55</b> <span class="ok">8 / 8</span></p>
-        <h2>escalated, with every real attack at top priority.</h2>
-        <p>A triage agent reads every incident: 205 dismissed, 154 monitored, 55 escalated. Both never-seen port scans were named correctly, though the classifier had called them normal.</p>
-        <p class="dim">47 of the 55 escalations were false alarms. Agents saw anonymized hosts and no labels.</p>
+        <p class="eyebrow">05 · Rank, then let agents read</p>
+        <p class="big"><b>19</b> <span class="ok">3 / 3</span></p>
+        <h2>escalated, with the real intrusion at top priority.</h2>
+        <p>A ranking step sends only 75 incidents to the AI: the 50 largest and 25 quiet ones. The triage agent escalates 19. All 3 top-priority escalations were the real intrusion: a compromised machine sweeping the network.</p>
+        <p class="dim">9 AI calls, about $0.30 for the whole day; sending the AI every incident took 133 calls. Agents saw pseudonymized hosts and no labels. On screen: every incident sent to the AI, plus a sample of the 1,176 held back.</p>
       </article>
     </div>
   </div>
@@ -108,7 +108,7 @@
   <header class="sec-head reveal">
     <p class="eyebrow">The product, in motion</p>
     <h2>The short list an analyst actually reads.</h2>
-    <p>A concept console replaying the real Friday run on a loop. Every incident card, triage decision and investigator report below is what the agents actually wrote. Click any incident to inspect it.</p>
+    <p>A concept console replaying a real Strayline v1 day on a loop: the 75 incidents the ranking sent to the AI, out of 1,251. Every incident card, triage decision and investigator report below is what the agents actually wrote. Click any incident to inspect it.</p>
   </header>
 
   <div class="con reveal" id="con">
@@ -116,13 +116,13 @@
       <span class="dots"><i></i><i></i><i></i></span>
       <strong>Strayline Console</strong>
       <span class="tag">concept</span>
-      <span class="tag tag-blue">replay · Friday · port scans unseen · 1% false alarms</span>
+      <span class="tag tag-blue">replay · v1 · a network it was not trained on · 2% false alarms</span>
       <span class="clock" id="con-clock">13:48:41</span>
     </div>
     <div class="con-stats" id="con-stats"></div>
     <div class="con-body">
       <div class="con-queue">
-        <div class="pane-head"><span>Incident queue</span><span id="q-count">0 / 414</span></div>
+        <div class="pane-head"><span>Sent to the AI</span><span id="q-count">0 / 75</span></div>
         <ol id="q"></ol>
       </div>
       <div class="con-detail" id="detail" aria-live="off"></div>
@@ -141,7 +141,7 @@
   <header class="sec-head reveal">
     <p class="eyebrow">The catchability map</p>
     <h2>Where to trust it, and where you still need a human.</h2>
-    <p>Hide an entire attack family during training, then test whether it is still caught. Each cell is the share of a never-seen family detected at a 1% false-alarm rate.</p>
+    <p>Train on one network, deploy on another it has never seen, and measure how much of each attack family is caught. Strayline v1 learns the new network's normal traffic first; the first version didn't.</p>
   </header>
 
   <div class="map-wrap reveal">
@@ -150,50 +150,33 @@
   </div>
 
   <header class="sec-head sub reveal">
-    <h3>The false-alarm budget is a cliff.</h3>
-    <p>Allow 5% false alarms instead of 1% and unseen port scans go from about a third caught to nearly all. DoS and botnets stay mostly invisible either way.</p>
+    <h3>More budget, more caught. The review queue stays the same size.</h3>
+    <p>On the new network, raising the false-alarm budget from 1% to 5% lifts mean detection from 83% to 95% (2017 lab → 2018 network) and from 43% to 90% (the reverse). The ranking still sends the AI at most 75 incidents a day.</p>
   </header>
 
   <div class="budget reveal" id="budget">
     <div class="budget-ctl">
       <label for="fpr">False-alarm budget</label>
-      <input id="fpr" type="range" min="0" max="3" step="1" value="1" aria-describedby="fpr-val">
-      <output id="fpr-val">1%</output>
+      <input id="fpr" type="range" min="0" max="2" step="1" value="1" aria-describedby="fpr-val">
+      <output id="fpr-val">2%</output>
     </div>
     <div class="bars" id="bars"></div>
     <ul class="legend inline">
-      <li><i class="k-ae"></i>autoencoder (learns normal)</li>
-      <li><i class="k-clf"></i>classifier (learns known attacks)</li>
+      <li><i class="k-ae"></i>2017 lab → 2018 network</li>
+      <li><i class="k-clf"></i>2018 lab → 2017 network</li>
     </ul>
   </div>
 
   <header class="sec-head sub reveal">
-    <h3>Does it carry to a different network?</h3>
-    <p>Not on its own. Trained on the 2017 network and pointed at a 2018 network it had never seen, the alert lines broke, and the model of "normal" did not transfer. Strayline has to learn each network's own normal traffic, which is why the next step is a real pilot.</p>
+    <h3>In short.</h3>
   </header>
-  <div class="xnet reveal">
-    <div>
-      <p class="d-h">False alarms on the new network · target 1%</p>
-      <table>
-        <thead><tr><th></th><th>2017 alert lines reused</th><th>Re-set on 2018 normal traffic</th></tr></thead>
-        <tbody>
-          <tr><th>Classifier</th><td class="bad">6.5%</td><td>1.1%</td></tr>
-          <tr><th>Autoencoder</th><td class="bad">33.0%</td><td>1.2%</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <div>
-      <p class="d-h">Attacks caught after re-setting · 1% false alarms</p>
-      <table>
-        <thead><tr><th></th><th>Classifier</th><th>Autoencoder</th></tr></thead>
-        <tbody>
-          <tr><th>Port scan</th><td>86.6%</td><td class="bad">2.1%</td></tr>
-          <tr><th>Six other families</th><td class="bad">under 7%</td><td class="bad">under 1%</td></tr>
-        </tbody>
-      </table>
-    </div>
-    <p class="fine">Trained on improved CIC-IDS2017, tested on CSE-CIC-IDS2018, mean of 3 seeds; here the classifier had seen every attack type in training. Both datasets are lab testbeds. Trained inside the 2018 network instead, the autoencoder caught 76% of never-seen infiltration and 69% of never-seen web attacks (5 seeds).</p>
+  <div class="avg reveal">
+    <div><b>87%</b><span>of attack traffic caught on a network it was never trained on, at 2% false alarms (70% in the reverse direction)</span></div>
+    <div><b>0.9–2.0%</b><span>false alarms on each of seven new days, with alert lines reset daily against a 2% target</span></div>
+    <div><b>19</b><span>escalations from 6.5 million connections in a day, with the real intrusion at the top</span></div>
+    <div><b>$0.30</b><span>of AI per day: 9 calls, because the ranking sends the agents only 75 incidents</span></div>
   </div>
+  <p class="fine">Means across 6–7 attack families, 3 seeds. Trained on improved CIC-IDS2017 and tested on CSE-CIC-IDS2018, and the reverse. Both are lab testbeds from the same research group.</p>
 </section>
 
 <!-- ───────── How it works ───────── -->
@@ -203,19 +186,20 @@
     <h2>A cheap detector on every flow. Agents only on incidents.</h2>
   </header>
   <ol class="pipe reveal">
-    <li><h4>Traffic</h4><p>82 flow statistics per connection. No IP addresses, no payloads.</p></li>
-    <li><h4>Detector</h4><p>A classifier for known attacks plus an autoencoder for anything unusual. The alert threshold is your false-alarm budget.</p></li>
-    <li><h4>Agents</h4><p>Triage reads every incident. An investigator writes the case report with read-only tools, and is allowed to say "novel, unknown".</p></li>
-    <li><h4>Analyst</h4><p>A few cases a day, not 50,000 alerts, plus a map of what the system catches and misses.</p></li>
+    <li><h4>Logs</h4><p>The connection logs networks already keep (Zeek or NetFlow): timing, ports, byte and packet counts, TCP flags. No payloads, no packet capture.</p></li>
+    <li><h4>Detector</h4><p>A classifier for known attacks, plus anomaly detectors that learn your network's normal from its first days of logs. Alert lines reset daily to hold your false-alarm budget.</p></li>
+    <li><h4>Incidents</h4><p>Alerts are grouped per host. Two queues pick what's worth a look: the largest incidents, plus small ones that only the anomaly detectors catch.</p></li>
+    <li><h4>Agents</h4><p>Triage reads the queue. An investigator writes the case report with read-only tools, and is allowed to say "novel, unknown". Optional, and off by default for pilots.</p></li>
+    <li><h4>Analyst</h4><p>About 20 escalations a day out of millions of connections, plus a map of what the system catches and misses.</p></li>
   </ol>
 
   <div class="limits reveal">
     <h3>What this is, honestly</h3>
     <ul>
-      <li>Results come from the improved CIC-IDS2017 dataset: more than two million flows from a 2017 lab testbed, not live traffic.</li>
-      <li>Infiltration (36 flows) and web attack (104 flows) are tiny families. Treat their rates as indicative only.</li>
-      <li>Hiding one family at a time only tests attacks that already exist in the data.</li>
-      <li>The triage prompt was revised once after an earlier Friday run, so Friday is not a fully untouched test.</li>
+      <li>Every result comes from public lab datasets (CIC-IDS2017 and CSE-CIC-IDS2018, from the same research group), not live traffic. A third dataset with real Zeek logs (UWF-ZeekData24) confirmed the log reader and the daily false-alarm control, but couldn't test detection fairly.</li>
+      <li>Quiet intrusions are caught poorly: about 20% of infiltration connections on the new network.</li>
+      <li>Hiding one family at a time only tests attacks that already exist in the data. Some families are tiny (36 infiltration flows in 2017), so treat their rates as indicative.</li>
+      <li>The lab classifier alone does not transfer to new networks. Strayline depends on learning each network's own normal traffic.</li>
     </ul>
   </div>
 </section>
@@ -242,7 +226,7 @@
 <section class="sec cta" id="contact">
   <div class="reveal">
     <h2>Pilot Strayline.</h2>
-    <p>Next comes traffic from other networks, and real analysts. If you run a security team or build for one, I'd like to test it with you.</p>
+    <p>Next is a shadow-mode pilot on a real network. The pilot kit is ready: it runs on your own machine, reads only connection logs, never touches live traffic, pseudonymizes every host, and sends nothing outside your network. If you run a security team or build for one, I'd like to test it with you.</p>
     <a class="btn" data-contact href="#">Get in touch</a>
   </div>
 </section>

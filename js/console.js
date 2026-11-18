@@ -1,5 +1,5 @@
-/* Live console: replays the real Friday run in time order, forever.
-   Rows, triage rationales and investigator reports are the agents' actual output. */
+/* Live console: replays the real Strayline v1 day in time order, forever: the incidents the
+   ranking sent to the AI. Rows, triage rationales and investigator reports are the agents' actual output. */
 (function () {
   'use strict';
   const SL = (window.SL = window.SL || {});
@@ -7,15 +7,15 @@
   const $ = (id) => document.getElementById(id);
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const fmt = (n) => Math.round(n).toLocaleString('en-US');
-  const FAMILY = { PortScan: 'port scan · never seen in training', Botnet: 'botnet', DDoS: 'DDoS' };
+  const FAMILY = { PortScan: 'compromised host sweeping the network (infiltration + port scan)', Infiltration: 'infiltration', Botnet: 'botnet', DDoS: 'DDoS' };
   const MAX_ROWS = 60;
 
   SL.initConsole = function () {
     const q = $('q'), detail = $('detail'), root = $('con');
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const list = D.incidents.slice().sort((a, b) => (a.t < b.t ? -1 : a.t > b.t ? 1 : 0));
+    const list = D.incidents.filter((r) => r.dec !== 'held').sort((a, b) => (a.t < b.t ? -1 : a.t > b.t ? 1 : 0));
     const F = D.funnel;
-    const stats = [['flows', 'flows replayed', ''], ['alerts', 'alerts', ''], ['inc', 'incidents', ''],
+    const stats = [['flows', 'connections', ''], ['alerts', 'alerts', ''], ['inc', 'sent to AI', ''],
       ['esc', 'escalated', 'esc'], ['mon', 'monitor', 'mon'], ['dis', 'dismissed', 'dis']];
     $('con-stats').innerHTML = stats.map((s) => `<div class="stat ${s[2]}"><b id="st-${s[0]}">0</b><span>${s[1]}</span></div>`).join('');
 
@@ -54,7 +54,7 @@
           ${r.truth ? `<span class="truth">ground truth, joined afterwards: ${esc(FAMILY[r.truth] || r.truth)}</span>` : ''}</div>
         <p class="d-route">${esc(r.src)} → ${esc(r.dst)} · ${esc(r.dir)} · first seen ${r.t}</p>
         <div class="d-grid">
-          <div><b>${fmt(r.flows)}</b><span>alerted flows</span></div>
+          <div><b>${fmt(r.flows)}</b><span>alerted connections</span></div>
           <div><b>${r.dur} min</b><span>duration</span></div>
           <div><b>${fmt(r.ports)}</b><span>dst ports</span></div>
           <div><b>${esc(r.sus)}</b><span>suspected</span></div>
@@ -62,10 +62,10 @@
         <div class="d-cols">
           <div><p class="d-h">Which detector fired</p>
             <div class="meter"><span>Classifier</span><span class="track"><i class="amber" data-w="${r.clf * 100}"></i></span><em>${Math.round(r.clf * 100)}%</em></div>
-            <div class="meter"><span>Autoencoder</span><span class="track"><i class="red" data-w="${r.ae * 100}"></i></span><em>${Math.round(r.ae * 100)}%</em></div>
+            <div class="meter"><span>Anomaly</span><span class="track"><i class="red" data-w="${r.ae * 100}"></i></span><em>${Math.round(r.ae * 100)}%</em></div>
           </div>
-          <div><p class="d-h">Most unusual features vs normal</p>
-            ${r.feat.map((f) => `<div class="meter"><span title="${esc(f[0])}">${esc(f[0])}</span><span class="track"><i data-w="${(f[1] / maxE) * 100}"></i></span><em>${f[1] >= 100 ? Math.round(f[1]) : f[1]}×</em></div>`).join('')}
+          <div><p class="d-h">Most unusual vs this network's normal (sd)</p>
+            ${r.feat.map((f) => `<div class="meter"><span title="${esc(f[0])}">${esc(f[0])}</span><span class="track"><i data-w="${(f[1] / maxE) * 100}"></i></span><em>${f[1] >= 100 ? Math.round(f[1]) : f[1]}</em></div>`).join('')}
           </div>
         </div>
         <div class="say"><div class="who"><b>Triage agent</b><span>confidence ${Math.round(r.conf * 100)}%</span></div><p id="d-why"></p></div>
@@ -85,7 +85,7 @@
     function addRow(r) {
       const li = document.createElement('li');
       li.dataset.id = r.id;
-      li.innerHTML = `<span class="id">${r.id}</span><span class="who">${esc(r.src)} → ${esc(r.dst)}<small>${fmt(r.flows)} flows</small></span><span class="badge ${r.dec}">${r.dec}${r.dec === 'escalate' ? ' · p' + r.pri : ''}</span>`;
+      li.innerHTML = `<span class="id">${r.id}</span><span class="who">${esc(r.src)} → ${esc(r.dst)}<small>${fmt(r.flows)} alerts</small></span><span class="badge ${r.dec}">${r.dec}${r.dec === 'escalate' ? ' · p' + r.pri : ''}</span>`;
       li.addEventListener('click', () => { holdUntil = Date.now() + 20000; $('con-status').textContent = 'inspecting · replay resumes shortly'; show(r, false); });
       q.prepend(li);
       while (q.children.length > MAX_ROWS) q.lastChild.remove();
@@ -111,11 +111,11 @@
           const r = list[i];
           await sleep(r.dec === 'escalate' ? 420 : 85);
           $('con-status').textContent = 'replaying';
-          c.alerts += r.flows; c[r.dec === 'escalate' ? 'esc' : r.dec === 'monitor' ? 'mon' : 'dis']++;
+          c[r.dec === 'escalate' ? 'esc' : r.dec === 'monitor' ? 'mon' : 'dis']++;
           addRow(r);
           $('con-clock').textContent = r.t;
           $('st-flows').textContent = fmt((F.flows * (i + 1)) / list.length);
-          $('st-alerts').textContent = fmt(c.alerts); $('st-inc').textContent = i + 1;
+          $('st-alerts').textContent = fmt((F.alerts * (i + 1)) / list.length); $('st-inc').textContent = i + 1;
           $('st-esc').textContent = c.esc; $('st-mon').textContent = c.mon; $('st-dis').textContent = c.dis;
           $('q-count').textContent = `${i + 1} / ${list.length}`;
           $('con-prog').style.width = ((i + 1) / list.length) * 100 + '%';

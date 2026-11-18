@@ -1,37 +1,40 @@
-/* Catchability map (results/lofo.csv, 10-seed means) and the false-alarm budget slider (results/budget.csv). */
+/* Catchability map and budget slider: Strayline v1 on a network it was not trained on
+   (results/product_eval_netflow, 3 seeds), against the first version (results/product_eval_host). */
 (function () {
   'use strict';
   const SL = (window.SL = window.SL || {});
   const D = window.STRAYLINE_DATA;
   const $ = (id) => document.getElementById(id);
-  const pct = (v) => (v >= 0.995 ? (v * 100).toFixed(1) : v < 0.1 ? (v * 100).toFixed(1) : Math.round(v * 100)) + '%';
+  const pct = (v) => (v == null ? '—' : (v >= 0.995 ? (v * 100).toFixed(1) : v < 0.1 ? (v * 100).toFixed(1) : Math.round(v * 100)) + '%');
+  const short = (v) => (v == null ? '—' : v < 0.1 ? (v * 100).toFixed(1) + '%' : Math.round(v * 100) + '%');
   const NOTES = {
-    'DDoS': 'DDoS: the classifier catches it without ever having seen it. The autoencoder misses it at this budget.',
-    'Infiltration': 'Infiltration: only 36 flows. The autoencoder catches 87% (95% interval 73 to 95%); treat as indicative.',
-    'Port scan': 'Port scan: the classifier calls unseen port scans normal. The autoencoder catches about a third at 1% false alarms.',
-    'Brute force': 'Brute force: close to invisible at this budget. Routing uncertain flows to the autoencoder helps a little.',
-    'DoS': 'DoS: a blind spot: slow DoS traffic sits near the normal line.',
-    'Botnet': 'Botnet: a blind spot: quiet beaconing looks like ordinary traffic to both models.',
-    'Web attack': 'Web attack: only 104 flows, and none caught at 1% false alarms. This is where a human is still needed.',
+    'DDoS': 'DDoS: caught in full on a new network, in both directions. The first version caught 9% and 39%.',
+    'Port scan': 'Port scan: 99% and above. Learning per-host behaviour (many ports per minute) makes scans stand out.',
+    'Brute force': 'Brute force: 100% and 81%, up from 23% and under 1%.',
+    'DoS': 'DoS: 99% and 69%, up from 5% and 23%. Per-host flood counts carry across networks.',
+    'Botnet': 'Botnet: 96% on the 2018 network, but only 7% on the 2017 one. A blind spot in one direction.',
+    'Web attack': 'Web attack: 74% and 69%. On the 2017 network the first version did better (89%).',
+    'Infiltration': 'Infiltration: the weak spot, 40% on the 2018 network. Too few flows to test on the 2017 one.',
   };
 
   SL.initMap = function () {
     const grid = $('grid'), note = $('map-note');
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    let html = '<div class="h" role="columnheader">Hidden family</div>' + D.methods.map((m) => `<div class="h" role="columnheader">${m}</div>`).join('');
+    let html = '<div class="h" role="columnheader">Attack family</div>' + D.methods.map((m) => `<div class="h" role="columnheader">${m}</div>`).join('');
     D.map.forEach((r, ri) => {
-      html += `<div class="f" role="rowheader">${r.family}<small>${r.n.toLocaleString('en-US')} flows</small></div>`;
-      r.det.forEach((v, ci) => { html += `<div class="cell${v < 0.1 ? ' blind' : ''}" role="cell" data-r="${ri}" data-c="${ci}" data-v="${v}">${pct(v)}</div>`; });
+      html += `<div class="f" role="rowheader">${r.family}${r.n ? `<small>${r.n.toLocaleString('en-US')} flows</small>` : ''}</div>`;
+      r.det.forEach((v, ci) => { html += `<div class="cell${v != null && v < 0.1 ? ' blind' : ''}" role="cell" data-r="${ri}" data-c="${ci}" data-v="${v == null ? '' : v}">${pct(v)}</div>`; });
     });
     grid.innerHTML = html;
     const cells = Array.from(grid.querySelectorAll('.cell'));
     const paint = (el) => {
+      if (el.dataset.v === '') { el.style.color = '#8A929E'; el.classList.add('on'); return; }
       const v = +el.dataset.v;
       el.style.background = `rgba(47,109,181,${(0.05 + 0.95 * Math.pow(v, 0.85)).toFixed(3)})`;
       el.style.color = v > 0.42 ? '#FFFFFF' : v < 0.1 ? '#C8423B' : '#0E1116';
       el.classList.add('on');
     };
-    const baseNote = `Mean of ${D.seeds} seeds. Outlined cells are blind spots: under 10% of a never-seen family caught.`;
+    const baseNote = `Share of each family's attack traffic caught at 2% false alarms. Mean of ${D.seeds} seeds, with 1% attack traffic hidden in the data each network learns from. Outlined cells are blind spots: under 10% caught.`;
     note.textContent = baseNote;
 
     let started = false, row = -1, timer = 0;
@@ -58,9 +61,9 @@
     const set = (k) => {
       out.textContent = D.fprs[k] * 100 + '%';
       D.budget.forEach((b, i) => {
-        $('ba-' + i).style.width = b.ae[k] * 100 + '%';
-        $('bc-' + i).style.width = b.clf[k] * 100 + '%';
-        $('bv-' + i).textContent = pct(b.ae[k]);
+        $('ba-' + i).style.width = (b.ae[k] || 0) * 100 + '%';
+        $('bc-' + i).style.width = (b.clf[k] || 0) * 100 + '%';
+        $('bv-' + i).textContent = short(b.ae[k]) + (b.clf[k] == null ? '' : ' · ' + short(b.clf[k]));
       });
     };
     set(+input.value);
@@ -72,7 +75,7 @@
       clearInterval(bt);
       if (e[0].isIntersecting && auto) bt = setInterval(() => {
         let k = +input.value + dir;
-        if (k > 3 || k < 0) { dir = -dir; k = +input.value + dir; }
+        if (k > D.fprs.length - 1 || k < 0) { dir = -dir; k = +input.value + dir; }
         input.value = k; set(k);
       }, 2400);
     }, { threshold: 0.3 }).observe($('budget'));
