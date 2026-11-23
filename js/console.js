@@ -98,7 +98,15 @@
     });
 
     SL.showIncident = (id) => {
-      const r = list.find((x) => x.id === id); if (!r) return;
+      const r = list.find((x) => x.id === id);
+      if (!r) {  // held back by the ranking: it never reached the AI, so say so instead of doing nothing
+        const h = D.incidents.find((x) => x.id === id); if (!h) return;
+        holdUntil = Date.now() + 30000; $('con-status').textContent = 'inspecting · replay resumes shortly';
+        detail.innerHTML = `<p class="d-route">${esc(h.id)} · ${esc(h.src)} → ${esc(h.dst)}</p><h4>Held back by the ranking</h4>` +
+          `<p>${fmt(h.flows)} alerted connections. Too small and too ordinary to make the day's 75, so the AI never read it. ` +
+          `That is the point of the ranking: 1,176 incidents like this one stay out of the analyst's queue.</p>`;
+        root.scrollIntoView({ behavior: 'smooth', block: 'center' }); return;
+      }
       holdUntil = Date.now() + 30000; $('con-status').textContent = 'inspecting · replay resumes shortly';
       show(r, false); root.scrollIntoView({ behavior: 'smooth', block: 'center' });
     };

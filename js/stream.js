@@ -412,7 +412,7 @@
         const add = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; n.textContent = text; el.appendChild(n); };
         add('b', '', r.id); add('span', 'badge ' + r.dec, (r.dec === 'held' ? 'held back' : r.dec) + (r.dec === 'escalate' ? ' · p' + r.pri : ''));
         add('p', '', r.src + ' → ' + r.dst); add('p', '', r.flows.toLocaleString('en-US') + ' alerted flows · ' + r.sus);
-        if (r.dec !== 'held') add('small', '', 'Click to open in the console');
+        add('small', '', r.dec === 'held' ? 'Held back by the ranking · click for why' : 'Click to open in the console');
       }
     }
     this.c.style.cursor = this.pick >= 0 ? 'pointer' : this.drag ? 'grabbing' : 'grab';
