@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Strayline · Catching the attacks nobody has seen yet</title>
-<meta name="description" content="Strayline is a hybrid AI detector that flags network traffic straying from the normal line, and shows defenders exactly where it can and can't be trusted.">
+<title>Strayline · The AI security analyst for teams that can't afford one</title>
+<meta name="description" content="Strayline is an AI security analyst for schools and mid-sized companies: it reads the network logs you already keep, finds the device that's acting wrong, investigates it and lets IT cut it off. It runs on your own machine.">
 <meta name="theme-color" content="#F3EEE3">
 <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
 <link rel="stylesheet" href="styles.css">
@@ -17,9 +17,9 @@
     <span>Strayline</span>
   </a>
   <div class="nav-links">
-    <a href="#s1">How it moves</a>
-    <a href="#console">Console</a>
-    <a href="#map">Catchability map</a>
+    <a href="#product">Product</a>
+    <a href="#real">Real malware</a>
+    <a href="#cost">Cost</a>
     <a href="#how">How it works</a>
     <a href="#team">Team</a>
     <a class="btn btn-sm" data-contact href="#contact">Pilot it</a>
@@ -42,12 +42,12 @@
       <div class="hero-copy">
         <p class="eyebrow">Strayline · beta</p>
         <h1>Catching the attacks nobody has seen&nbsp;yet.</h1>
-        <p class="lede">A hybrid AI detector that flags network traffic straying from the normal line, and shows defenders exactly where it can and can't be trusted.</p>
+        <p class="lede">An AI security analyst for teams that can't afford one. Strayline reads the network logs you already keep, finds the device that's acting wrong, investigates it, and lets IT cut it off in one click. All on your own machine.</p>
         <div class="cta-row">
-          <a class="btn" href="#s1">Watch it work</a>
-          <a class="btn btn-ghost" href="#console">Open the console</a>
+          <a class="btn" href="#product">See the product</a>
+          <a class="btn btn-ghost" href="#real">Tested on real malware</a>
         </div>
-        <p class="fine">Live and touchable. Driven by real replay results on public lab traffic.</p>
+        <p class="fine">Built for schools and mid-sized companies. Your data never leaves the building.</p>
       </div>
       <a class="scroll-cue" href="#s1" aria-label="Scroll"><span></span></a>
     </div>
@@ -103,12 +103,76 @@
   </div>
 </section>
 
+<!-- ───────── The product today ───────── -->
+<section class="sec" id="product">
+  <header class="sec-head reveal">
+    <p class="eyebrow">The product</p>
+    <h2>Every morning: a short list, a case report, and an off switch.</h2>
+    <p>Strayline runs on one machine on your network and turns a day of connection logs into the few devices worth a look. These are real screenshots of the Strayline app on a day of traffic from a smart device infected with Mirai-style malware.</p>
+  </header>
+  <figure class="shot reveal">
+    <img src="assets/console-queue.jpg" alt="Strayline daily queue: 200,538 connections, 2 incidents for review, the infected device at the top" width="1990" height="803" loading="lazy">
+    <figcaption>The daily queue. 200,538 connections in, 2 incidents out, and the infected device is #1.</figcaption>
+  </figure>
+  <div class="feature reveal">
+    <figure class="shot tall">
+      <img src="assets/console-investigate.jpg" alt="Strayline case report: likely compromised, high confidence, recommendation quarantine" width="868" height="1284" loading="lazy">
+    </figure>
+    <ol class="flow">
+      <li><h4>1 · Find</h4><p>Detectors learn what normal looks like on <em>your</em> network from its first days of logs, then flag what strays from it. Alerts are grouped per device and ranked, so the list stays short.</p></li>
+      <li><h4>2 · Investigate</h4><p>One click and an AI agent works the case: it pulls the device's other incidents, its history, and everything it did that day compared with its own normal and the rest of the network. Then it writes a plain-English report with a verdict and a next step.</p></li>
+      <li><h4>3 · Contain</h4><p>If the evidence is strong, it recommends quarantine. One click records the decision and gives IT the exact firewall rule to cut the device off, and one more undoes it.</p></li>
+      <li><h4>4 · Learn</h4><p>IT marks each case <em>real threat</em>, <em>unusual but fine</em> or <em>false alarm</em>. Cleared devices stop being flagged; confirmed threats stay out of tomorrow's idea of normal.</p></li>
+    </ol>
+  </div>
+  <p class="fine">Guardrail: the AI writes the report, but it can't recommend cutting a device off unless the computed evidence includes at least one strong warning sign. In testing it recommended quarantine for every real attacker and for none of the harmless devices.</p>
+</section>
+
+<!-- ───────── Real malware ───────── -->
+<section class="sec" id="real">
+  <header class="sec-head reveal">
+    <p class="eyebrow">Tested on real malware</p>
+    <h2>13 real infections it had never seen. The infected device was #1 every day.</h2>
+    <p>IoT-23 is a public set of real network logs from smart devices infected with real malware (Mirai, Okiru, Torii and others), recorded by Stratosphere Lab in Prague. Each capture went to Strayline as a brand-new network, with no labels and no tuning.</p>
+  </header>
+  <div class="avg reveal">
+    <div><b>20 / 20</b><span>days the infected device was the #1 source on the daily list, across 13 captures, out of up to ~2,500 alerting sources a day</span></div>
+    <div><b>100%</b><span>of attack traffic caught at 3.3% false alarms when the device was infected after setup (10.4M connections)</span></div>
+    <div><b>6 of 6</b><span>right calls by the AI investigator: quarantine on all 4 attack incidents, keep watching on both harmless devices</span></div>
+    <div><b>~6 s</b><span>per investigation, on a laptop, with nothing sent outside</span></div>
+  </div>
+  <p class="fine">The 6 cases: three incidents from a port scanner on a 2018 test network, the IoT-23 infected device, and two harmless devices. Full write-up of every capture, including the misses, is available on request.</p>
+</section>
+
+<!-- ───────── Cost ───────── -->
+<section class="sec" id="cost">
+  <header class="sec-head reveal">
+    <p class="eyebrow">Why it's cheap to run</p>
+    <h2>Security-team results without the security-team bill.</h2>
+    <p>Most organizations this size can't hire a security analyst, and the big network-monitoring products are priced for large enterprises. Strayline is built to be affordable from the ground up.</p>
+  </header>
+  <div class="avg reveal">
+    <div><b>$0</b><span>new hardware. It reads the connection logs your firewall or network already produces (Zeek or NetFlow).</span></div>
+    <div><b>~3 min</b><span>to process a full day of a 6.5-million-connection network, on an ordinary laptop</span></div>
+    <div><b>$0</b><span>per-use AI fees. The AI runs on your own machine. A cloud model is optional, about $0.30 a day.</span></div>
+    <div><b>~20</b><span>cases a day for a person to read instead of 130,000 alerts, so your existing IT staff can keep up</span></div>
+  </div>
+  <div class="limits reveal">
+    <h3>How it's sold</h3>
+    <ul>
+      <li>A simple monthly subscription per site, priced for schools and mid-sized businesses: a fraction of one security hire.</li>
+      <li>Through the managed IT companies that already run IT for hundreds of small businesses and schools, so one partner reaches many customers.</li>
+      <li>Starting with free pilots in shadow mode: Strayline only reads logs and never touches live traffic until you say so.</li>
+    </ul>
+  </div>
+</section>
+
 <!-- ───────── Live console ───────── -->
 <section class="sec" id="console">
   <header class="sec-head reveal">
-    <p class="eyebrow">The product, in motion</p>
-    <h2>The short list an analyst actually reads.</h2>
-    <p>A concept console replaying a real Strayline v1 day on a loop: the 75 incidents the ranking sent to the AI, out of 1,251. Every incident card, triage decision and investigator report below is what the agents actually wrote. Click any incident to inspect it.</p>
+    <p class="eyebrow">A campus-sized day, replayed</p>
+    <h2>6.5 million connections in. The real intrusion at the top.</h2>
+    <p>An earlier version of the console replaying a real Strayline v1 day on a loop: the 75 incidents the ranking sent to the AI, out of 1,251. Every incident card, triage decision and investigator report below is what the agents actually wrote. Click any incident to inspect it.</p>
   </header>
 
   <div class="con reveal" id="con">
@@ -189,14 +253,15 @@
     <li><h4>Logs</h4><p>The connection logs networks already keep (Zeek or NetFlow): timing, ports, byte and packet counts, TCP flags. No payloads, no packet capture.</p></li>
     <li><h4>Detector</h4><p>A classifier for known attacks, plus anomaly detectors that learn your network's normal from its first days of logs. Alert lines reset daily to hold your false-alarm budget.</p></li>
     <li><h4>Incidents</h4><p>Alerts are grouped per host. Two queues pick what's worth a look: the largest incidents, plus small ones that only the anomaly detectors catch.</p></li>
-    <li><h4>Agents</h4><p>Triage reads the queue. An investigator writes the case report with read-only tools, and is allowed to say "novel, unknown". Optional, and off by default for pilots.</p></li>
-    <li><h4>Analyst</h4><p>About 20 escalations a day out of millions of connections, plus a map of what the system catches and misses.</p></li>
+    <li><h4>Investigate</h4><p>A local AI agent gathers the evidence on a device and writes the case report: verdict, what happened, what to do next. Nothing leaves your machine.</p></li>
+    <li><h4>Contain</h4><p>One-click quarantine with the firewall rule to apply, and an analyst's label on every case that teaches Strayline your network.</p></li>
   </ol>
 
   <div class="limits reveal">
     <h3>What this is, honestly</h3>
     <ul>
-      <li>Every result comes from public lab datasets (CIC-IDS2017 and CSE-CIC-IDS2018, from the same research group), not live traffic. A third dataset with real Zeek logs (UWF-ZeekData24) confirmed the log reader and the daily false-alarm control, but couldn't test detection fairly.</li>
+      <li>Every result comes from public datasets: two lab testbeds (CIC-IDS2017 and CSE-CIC-IDS2018), real malware captures (IoT-23) and real Zeek logs (UWF-ZeekData24). There's no live pilot yet; a home-network test is running now, and a business or school pilot is next.</li>
+      <li>If a device is already infected during setup, Strayline can learn the infection as normal. It now warns when one device dominates setup traffic and stops flagged devices from shaping tomorrow's normal, which brought the infected device back to #1, but setup on a known-quiet week is still best.</li>
       <li>Quiet intrusions are caught poorly: about 20% of infiltration connections on the new network.</li>
       <li>Hiding one family at a time only tests attacks that already exist in the data. Some families are tiny (36 infiltration flows in 2017), so treat their rates as indicative.</li>
       <li>The lab classifier alone does not transfer to new networks. Strayline depends on learning each network's own normal traffic.</li>
@@ -226,7 +291,7 @@
 <section class="sec cta" id="contact">
   <div class="reveal">
     <h2>Pilot Strayline.</h2>
-    <p>Next is a shadow-mode pilot on a real network. The pilot kit is ready: it runs on your own machine, reads only connection logs, never touches live traffic, pseudonymizes every host, and sends nothing outside your network. If you run a security team or build for one, I'd like to test it with you.</p>
+    <p>Looking for 2–3 pilot sites: a school, a mid-sized company, or a managed IT provider willing to try it on one client. It runs on your own machine, reads only connection logs, never touches live traffic, and sends nothing outside your network. If that's you, or you know who it is, I'd like to talk.</p>
     <a class="btn" data-contact href="#">Get in touch</a>
   </div>
 </section>
