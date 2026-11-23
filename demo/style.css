@@ -3,9 +3,6 @@
   --blue: #2F6DB5; --red: #D9483F; --green: #3C8A5A; --amber: #B7832F;
   --mono: ui-monospace, "SF Mono", Menlo, monospace;
 }
-@media (prefers-color-scheme: dark) {
-  :root { --paper: #191815; --card: #22211D; --ink: #ECE7DC; --muted: #A39E92; --line: #3A3730; --blue: #6FA0DD; --red: #EF7066; }
-}
 * { box-sizing: border-box; }
 body { margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.45 -apple-system, "Segoe UI", sans-serif; }
 header { display: flex; align-items: center; gap: 24px; padding: 12px 20px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
