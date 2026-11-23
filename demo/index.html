@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Strayline console · live demo</title>
+<link rel="stylesheet" href="style.css">
+<meta name="theme-color" content="#F3EEE3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#191815" media="(prefers-color-scheme: dark)">
+</head>
+<body>
+<div class="demo-bar">Live demo · real Strayline console on recorded data (IoT-23 scenario 1-1, a smart device infected with Mirai-style malware) · Investigate replays the report the local AI wrote · nothing you click is saved</div>
+<header>
+  <div class="brand"><svg viewBox="0 0 40 20" aria-hidden="true"><path d="M2 14 C10 14 14 6 20 6 S30 14 38 14" fill="none" stroke="var(--blue)" stroke-width="2.5"/><circle cx="29" cy="4" r="2.6" fill="var(--red)"/></svg>Strayline <span>console</span></div>
+  <nav><button id="tab-queue" class="on">Daily queue</button><button id="tab-summary">Pilot summary</button></nav>
+  <div class="local">Local only · hosts are pseudonyms</div>
+</header>
+<main>
+  <aside id="days"></aside>
+  <section id="view"></section>
+  <section id="detail" hidden></section>
+</main>
+<script src="data.js"></script>
+<script src="shim.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

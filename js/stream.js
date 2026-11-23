@@ -48,11 +48,11 @@
     let px = 0, py = 0, moved = 0;
     c.style.touchAction = 'pan-y'; c.style.cursor = 'grab';
     const pos = (e) => { const r = c.getBoundingClientRect(); this.mx = e.clientX - r.left; this.my = e.clientY - r.top; this.hov = true; };
-    c.addEventListener('pointerdown', (e) => { pos(e); this.drag = true; moved = 0; px = e.clientX; py = e.clientY; try { c.setPointerCapture(e.pointerId); } catch (_) {} });
+    c.addEventListener('pointerdown', (e) => { pos(e); this.drag = true; moved = 0; this.moved = 0; px = e.clientX; py = e.clientY; try { c.setPointerCapture(e.pointerId); } catch (_) {} });
     c.addEventListener('pointermove', (e) => {
       pos(e);
       if (!this.drag) return;
-      const dx = e.clientX - px, dy = e.clientY - py; px = e.clientX; py = e.clientY; moved += Math.abs(dx) + Math.abs(dy);
+      const dx = e.clientX - px, dy = e.clientY - py; px = e.clientX; py = e.clientY; moved += Math.abs(dx) + Math.abs(dy); this.moved = moved;
       this.velY = -dx * 0.0032; this.velP = dy * 0.0028; this.orbY += this.velY; this.orbP += this.velP;
     });
     const release = (e) => { if (e.pointerType !== 'mouse') { this.hov = false; this.mx = this.my = -999; } };
@@ -388,7 +388,7 @@
 
     // hover an incident cluster: highlight + tooltip with the real incident
     this.pick = -1;
-    if (p > 3.7 && this.hov && !this.drag) {
+    if (p > 3.7 && this.hov && (!this.drag || this.moved < 6)) {  // keep the pick during a click, drop it once dragging
       const cf = s >= 4 ? fs : 0;
       let best = 26 * 26, bx = 0, by = 0, br = 0;
       for (let j = 0; j < dec.length; j++) {

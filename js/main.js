@@ -61,6 +61,6 @@
   document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
 
   SL.initConsole();
-  SL.initMap();
+  if (SL.initMap) SL.initMap();
   SL.film = film;
 })();
