@@ -43,18 +43,26 @@
   const clear = () => document.querySelectorAll(".tour-hl").forEach((e) => e.classList.remove("tour-hl"));
   function end() { clear(); card?.remove(); card = null; i = -1; }
 
-  async function show(n) {
+  // Inside the website's iframe, scrollIntoView also scrolls the page around it: put that back at once.
+  function reveal(el) {
+    let keep = null;
+    try { if (window.top !== window) keep = [parent.scrollX, parent.scrollY]; } catch (e) { /* other origin: leave it */ }
+    el.scrollIntoView({ behavior: keep ? "instant" : "smooth", block: el.offsetHeight > innerHeight * 0.6 ? "start" : "center" });
+    if (keep) parent.scrollTo({ left: keep[0], top: keep[1], behavior: "instant" });
+  }
+
+  async function show(n, auto = false) {
     if (busy || n < 0 || n >= STEPS.length) return;
     busy = true; i = n; clear();
     const s = STEPS[n];
     render(s, true);
     try { if (s.go) await s.go(); } catch (e) { /* a failed step still shows its text */ }
     const el = find(s);
-    if (el) { el.classList.add("tour-hl"); el.scrollIntoView({ behavior: "smooth", block: el.offsetHeight > innerHeight * 0.6 ? "start" : "center" }); }
-    busy = false; render(s, false);
+    if (el) { el.classList.add("tour-hl"); if (!auto) reveal(el); }
+    busy = false; render(s, false, auto);
   }
 
-  function render(s, loading) {
+  function render(s, loading, auto = false) {
     if (!card) { card = document.createElement("div"); card.className = "tour"; card.setAttribute("role", "dialog"); card.setAttribute("aria-label", "Demo tour"); document.body.appendChild(card); }
     const last = i === STEPS.length - 1;
     card.innerHTML = `<div class="n">Tour · ${i + 1} of ${STEPS.length}</div><p>${s.text}</p>
@@ -63,7 +71,7 @@
     card.querySelector('[data-a="end"]').onclick = end;
     card.querySelector('[data-a="back"]')?.addEventListener("click", () => show(i - 1));
     card.querySelector('[data-a="next"]')?.addEventListener("click", () => show(i + 1));
-    card.querySelector(last ? '[data-a="end"]' : '[data-a="next"]').focus({ preventScroll: true });
+    if (!loading && !auto) card.querySelector(last ? '[data-a="end"]' : '[data-a="next"]').focus({ preventScroll: true });
   }
 
   document.addEventListener("keydown", (e) => { if (card && e.key === "Escape") end(); });
@@ -71,4 +79,10 @@
   btn.className = "tour-btn"; btn.textContent = "Take the tour";
   btn.onclick = () => show(0);
   document.querySelector("header nav").appendChild(btn);
+
+  // Start on step 1 once the console has loaded, unless the link opens a specific incident.
+  if (!location.hash.includes("/")) (async () => {
+    for (let t = 0; t < 50 && !document.querySelector("#view .stats"); t++) await new Promise((r) => setTimeout(r, 100));
+    if (i < 0) show(0, true);
+  })();
 })();
