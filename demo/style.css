@@ -92,3 +92,4 @@ details summary { cursor: pointer; margin-top: 8px; }
 
 .demo-bar { font: 12px/1.4 var(--mono); color: var(--muted); background: var(--card); border-bottom: 1px solid var(--line); padding: 6px 20px; }
 .embed .demo-bar { display: none; }
+#ask-go { white-space: nowrap; flex: none; }

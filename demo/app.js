@@ -91,7 +91,7 @@ async function openIncident(id) {
     <div id="quar">${quarHTML(c)}</div>
     <div class="eyebrow" style="margin-top:16px">Ask about this incident</div>
     <div class="ask"><input id="ask-q" placeholder="Is this worth investigating? What would you check first?">
-    <div class="row"><button id="ask-go">Ask local AI</button><span class="note">Runs on this machine; sends only the card above.</span></div>
+    <div class="row"><button id="ask-go">Ask local AI</button><span class="note">Not available in this web demo: Ask needs Strayline and its local AI installed on your machine. Use Investigate to see a recorded AI report.</span></div>
     <div id="ask-out"></div></div>`;
   $("#detail").hidden = false; $("main").classList.add("with-detail");
   $(".close").onclick = closeDetail;

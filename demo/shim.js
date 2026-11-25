@@ -45,7 +45,7 @@
       D.investigated[k] = true;
       return json({ ...inv, at: now() });
     }
-    if (parts[0] === "ask") return json({ text: "In the demo, use Investigate: it replays the case report the local AI wrote for this incident.", model: null, seconds: 0 });
+    if (parts[0] === "ask") return json({ text: "Ask isn't available in this web demo: it needs Strayline and its local AI model installed on your own machine. Use Investigate above to see the report the local AI wrote for this incident.", model: null, seconds: 0 });
     return json({ error: "not found" }, 404);
   };
 })();
