@@ -90,6 +90,14 @@ details summary { cursor: pointer; margin-top: 8px; }
   .hide-sm { display: none; }
 }
 
+.inv-row { font: inherit; font-size: 12px; padding: 3px 10px; border-radius: 99px; border: 1px solid var(--blue); background: color-mix(in srgb, var(--blue) 10%, transparent); color: var(--blue); cursor: pointer; white-space: nowrap; }
+.inv-row:hover { background: var(--blue); color: #fff; }
+.pill.verdict.v-likely_compromised { background: var(--red); border-color: var(--red); color: #fff; }
+.pill.verdict.v-suspicious { background: var(--amber); border-color: var(--amber); color: #fff; }
+.pill.verdict.v-likely_benign { background: var(--green); border-color: var(--green); color: #fff; }
+.legend { margin-top: 10px; }
+.legend i { display: inline-block; width: 18px; height: 6px; border-radius: 3px; margin: 0 4px 1px 8px; vertical-align: middle; }
+
 .demo-bar { font: 12px/1.4 var(--mono); color: var(--muted); background: var(--card); border-bottom: 1px solid var(--line); padding: 6px 20px; }
 .embed .demo-bar { display: none; }
 #ask-go { white-space: nowrap; flex: none; }

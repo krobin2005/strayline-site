@@ -22,7 +22,7 @@ async function loadDays() {
 
 function firedBar(f) {
   const c = Math.round(100 * (f.classifier || 0)), a = Math.round(100 * (f.autoencoder || 0));
-  return `<span class="bar" title="classifier ${c}% · anomaly ${a}%"><i style="width:${c / 2}%;background:var(--red)"></i><i style="width:${a / 2}%;background:var(--blue)"></i></span>`;
+  return `<span class="bar" title="Red: attack classifier ${c}% · Blue: anomaly detector ${a}% of this device's alerts"><i style="width:${c / 2}%;background:var(--red)"></i><i style="width:${a / 2}%;background:var(--blue)"></i></span>`;
 }
 
 async function showDay(day) {
@@ -42,14 +42,21 @@ async function showDay(day) {
       <div class="stat" id="stat-labelled"><b>${s.labelled}/${s.for_review}</b><span>labelled · ${real} real</span></div>
     </div>
     <p class="note">Thresholds ${esc(s.thresholds)}, aiming for ${pct(s.fpr_target)} of normal traffic. Ranked by alert volume, then the low-and-slow queue. These are leads for a person, not verdicts.</p>
-    <table><thead><tr><th>#</th><th>Incident</th><th>Queue</th><th>Source</th><th class="hide-sm">Destinations</th><th>First seen</th><th class="num">Alerts</th><th class="hide-sm">Ports</th><th class="hide-sm">Fired by</th><th>Label</th></tr></thead>
+    <table><thead><tr><th>#</th><th>Incident</th><th>Queue</th><th>Source</th><th class="hide-sm">Destinations</th><th>First seen</th><th class="num">Alerts</th><th class="hide-sm">Ports</th><th class="hide-sm" title="Red: the attack classifier (matches known attack patterns). Blue: the anomaly detector (unusual for this network). Longer = more of this device's alerts.">Fired by</th><th>AI report</th><th>Label</th></tr></thead>
     <tbody>${state.rows.map((c) => `<tr data-id="${esc(c.id)}">
       <td>${c.rank}</td><td class="nw">${esc(c.id)}</td><td><span class="pill q-${esc(c.queue)}">${esc(c.queue)}</span></td>
       <td class="nw">${esc(c.src)}${c.quarantined ? ` <span class="pill quar">quarantined</span>` : ""}</td><td class="hide-sm">${esc(c.dst)}</td><td>${esc(c.first_seen)}</td>
       <td class="num">${c.alerted_flows.toLocaleString()}</td><td class="hide-sm">${esc((c.top_dst_ports || []).slice(0, 3).join(", "))}</td>
       <td class="hide-sm">${firedBar(c.fired_by)}</td>
-      <td>${c.feedback ? `<span class="pill l-${esc(c.feedback.label)}">${LABEL[c.feedback.label]}</span>` : ""}</td></tr>`).join("")}</tbody></table>`;
+      <td>${c.verdict ? `<span class="pill verdict v-${esc(c.verdict)}">${esc(VERDICT[c.verdict] || c.verdict)}</span>` : `<button class="inv-row" data-id="${esc(c.id)}">Investigate</button>`}</td>
+      <td>${c.feedback ? `<span class="pill l-${esc(c.feedback.label)}">${LABEL[c.feedback.label]}</span>` : ""}</td></tr>`).join("")}</tbody></table>
+    <p class="note legend"><b>Fired by:</b> <i style="background:var(--red)"></i>attack classifier (matches known attack patterns) <i style="background:var(--blue)"></i>anomaly detector (unusual for this network). The longer the color, the more of the device's alerts that model raised. <b>Investigate</b> has the AI write a case report on the device.</p>`;
   document.querySelectorAll("tbody tr").forEach((tr) => (tr.onclick = () => openIncident(tr.dataset.id)));
+  document.querySelectorAll(".inv-row").forEach((b) => (b.onclick = async (e) => {
+    e.stopPropagation();
+    await openIncident(b.dataset.id);
+    if (!state.open?.investigation) investigate();
+  }));
   history.replaceState(null, "", `#${day}`);
 }
 
@@ -69,13 +76,15 @@ async function openIncident(id) {
     <button class="close" title="Close">×</button>
     <div class="eyebrow">${esc(c.queue || "not queued")} · ${esc(state.day)}</div>
     <h2>${esc(c.id)}: ${esc(c.src)} → ${esc(c.dst)}</h2>
+    <div class="eyebrow">AI case report</div>
+    <div id="inv">${invHTML(c.investigation, c)}</div>
     <dl>
       <dt>Direction</dt><dd>${esc(c.direction)}</dd>
       <dt>First seen</dt><dd>${esc(c.first_seen)} for ${c.duration_min} min</dd>
       <dt>Alerted flows</dt><dd>${c.alerted_flows.toLocaleString()} (${c.flows_per_min}/min)</dd>
       <dt>Targets</dt><dd>${c.distinct_dst_hosts} hosts, ${c.distinct_dst_ports} ports (top: ${esc((c.top_dst_ports || []).join(", "))})</dd>
       <dt>Protocols</dt><dd>${esc(protos)}</dd>
-      <dt>Fired by</dt><dd>classifier ${pct(c.fired_by.classifier)}, anomaly ${pct(c.fired_by.autoencoder)} ${firedBar(c.fired_by)}</dd>
+      <dt>Fired by</dt><dd>${firedBar(c.fired_by)} <span style="color:var(--red)">attack classifier ${pct(c.fired_by.classifier)}</span>, <span style="color:var(--blue)">anomaly detector ${pct(c.fired_by.autoencoder)}</span></dd>
       <dt>Looks like</dt><dd>${esc(Object.keys(c.nearest_known_class || {})[0] || "-")}</dd>
     </dl>
     <div class="eyebrow">Most unusual vs. this site's normal</div>
@@ -85,8 +94,6 @@ async function openIncident(id) {
     <div class="fb">${Object.entries(LABEL).map(([k, v]) => `<button data-l="${k}" class="${fb.label === k ? "on" : ""}">${v}</button>`).join("")}</div>
     <textarea id="fb-note" placeholder="Note (what you checked, what it was)">${esc(fb.note || "")}</textarea>
     <div class="row"><label class="note" for="fb-min">Minutes spent</label><input id="fb-min" type="number" min="0" step="0.5" value="${esc(fb.minutes ?? "")}"><span id="fb-saved" class="saved"></span></div>
-    <div class="eyebrow" style="margin-top:16px">Investigate</div>
-    <div id="inv">${invHTML(c.investigation, c)}</div>
     <div class="eyebrow" style="margin-top:16px">Contain</div>
     <div id="quar">${quarHTML(c)}</div>
     <div class="eyebrow" style="margin-top:16px">Ask about this incident</div>
@@ -133,6 +140,9 @@ async function investigate() {
   box.innerHTML = `<p class="note">Investigating ${esc(c.src)}: gathering its incidents, history and activity, then writing the report (local AI, up to a minute)…</p>`;
   try {
     c.investigation = await api("/api/investigate", { day: state.day, id: c.id });
+    const cell = document.querySelector(`.inv-row[data-id="${CSS.escape(c.id)}"]`)?.parentElement;
+    const v = c.investigation.report.verdict;
+    if (cell) cell.innerHTML = `<span class="pill verdict v-${esc(v)}">${esc(VERDICT[v] || v)}</span>`;
     if (state.open !== c) return;
     box.innerHTML = invHTML(c.investigation, c);
   } catch (e) {

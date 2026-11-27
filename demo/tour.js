@@ -10,7 +10,7 @@
     { el: "#days", text: "Strayline runs once a day on the network logs a site already keeps. Each day gets its own short list. This demo is 5 days of a real smart-device network, with one device infected by Mirai-style malware.",
       go: day },
     { el: "#view .stats", text: "The point: hundreds of thousands of connections and tens of thousands of raw alerts become a couple of incidents a person can actually look at.", go: day },
-    { el: () => firstRow(), text: "Each row is one device worth a look, ranked by how many alerts it set off. Strayline groups alerts per device, so you get one case per device, not one alert per connection.", go: day },
+    { el: () => firstRow(), text: "Each row is one device worth a look, ranked by how many alerts it set off. Strayline groups alerts per device, so you get one case per device, not one alert per connection. The red and blue bar shows which model raised its alerts (red: known attack patterns, blue: unusual for this network), and the AI report column shows the local AI's verdict. In the app, a case without one has an Investigate button right there.", go: day },
     { el: "#detail dl", text: "Open a case and you see what the device did: when, how much, how many hosts and ports it touched, and which models flagged it.",
       go: open },
     { el: "#detail table", text: "Why it was flagged: the traits where this device is furthest from this network's own normal, in standard deviations.", go: open },
