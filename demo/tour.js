@@ -2,26 +2,28 @@
 // so it can call the console's own functions (showDay, openIncident, investigate, showSummary).
 (function () {
   const TOUR_DAY = "2018-05-13";
+  // Inside the Mac app (demo network) the app sets window.STRAYLINE_APP; on the website it's absent.
+  const APP = window.STRAYLINE_APP || null;
   const firstRow = () => document.querySelector("#view tbody tr");
   // Each step sets up what it shows, so Back works from any step.
   const day = async () => { if (state.tab !== "queue" || state.day !== TOUR_DAY) await showDay(state.days.some((d) => d.day === TOUR_DAY) ? TOUR_DAY : state.days[0].day); };
   const open = async () => { await day(); const r = firstRow(); if (r && state.open?.id !== r.dataset.id) await openIncident(r.dataset.id); };
   const STEPS = [
-    { el: "#days", text: "Strayline runs once a day on the network logs a site already keeps. Each day gets its own short list. This demo is 5 days of a real smart-device network, with one device infected by Mirai-style malware.",
+    { el: "#days", text: "Strayline runs once a day on the network logs a site already keeps. Each day gets its own short list. This demo is 5 days of a real smart-device network, with one device infected by Mirai-style malware." + (APP ? " Everything you do here stays in the demo." : ""),
       go: day },
     { el: "#view .stats", text: "The point: hundreds of thousands of connections and tens of thousands of raw alerts become a couple of incidents a person can actually look at.", go: day },
     { el: () => firstRow(), text: "Each row is one device worth a look, ranked by how many alerts it set off. Strayline groups alerts per device, so you get one case per device, not one alert per connection. The red and blue bar shows which model raised its alerts (red: known attack patterns, blue: unusual for this network), and the AI report column shows the local AI's verdict. In the app, a case without one has an Investigate button right there.", go: day },
     { el: "#detail dl", text: "Open a case and you see what the device did: when, how much, how many hosts and ports it touched, and which models flagged it.",
       go: open },
     { el: "#detail table", text: "Why it was flagged: the traits where this device is furthest from this network's own normal, in standard deviations.", go: open },
-    { el: "#inv", text: "Investigate: the local AI pulls the device's history and activity, checks the warning signs, and writes a case report with a verdict and a recommendation. Here it replays the report it wrote on a laptop (about 6 s, nothing sent to the cloud).",
+    { el: "#inv", text: "Investigate: the local AI pulls the device's history and activity, checks the warning signs, and writes a case report with a verdict and a recommendation. " + (APP ? "Here it shows the report it already wrote for this case; on your own network you click Investigate on any row." : "Here it replays the report it wrote on a laptop (about 6 s, nothing sent to the cloud)."),
       go: async () => { await open(); if (!state.open?.investigation && document.querySelector("#inv-go")) await investigate(); } },
     { el: "#quar", text: "Contain: one click gives the firewall rules to cut this device off (pf, iptables, nftables or Cisco ACL) and logs who decided and why. Release undoes it. Try it: nothing in the demo is saved.", go: open },
     { el: ".fb", text: "Your judgement: label the case. Labels feed the next day's run (devices you clear count as normal again) and add up in the pilot summary.", go: open },
-    { el: ".ask", text: "Ask: type any question about the case to the local AI. It needs Strayline and its local AI installed on your own machine, so it doesn't answer in this web demo.", go: open },
+    { el: ".ask", text: APP ? "Ask: type any question about the case and the AI answers from this case's details. Which AI is used is up to you, in Settings." : "Ask: type any question about the case to the local AI. It needs Strayline and its local AI installed on your own machine, so it doesn't answer in this web demo.", go: open },
     { el: "#view", text: "Pilot summary: day by day, how many connections came in, how many cases went to a person, and how they were labelled. That's what a pilot is judged on.",
       go: async () => { await showSummary(); } },
-    { el: null, text: "That's the tour. Pick any day or case and click around: Investigate, Quarantine and labels all work here, and nothing is saved." },
+    { el: null, text: APP ? "That's the demo. Next, point Strayline at your own network's logs: it learns your normal and gives you this same short list each day. You can come back to the demo any time from the home screen." : "That's the tour. Pick any day or case and click around: Investigate, Quarantine and labels all work here, and nothing is saved." },
   ];
 
   let i = -1, card = null, busy = false;
@@ -67,11 +69,12 @@
     const last = i === STEPS.length - 1;
     card.innerHTML = `<div class="n">Tour · ${i + 1} of ${STEPS.length}</div><p>${s.text}</p>
       <div class="row"><button data-a="end">${last ? "Close" : "Skip"}</button>${i > 0 ? `<button data-a="back"${loading ? " disabled" : ""}>Back</button>` : ""}
-      ${last ? "" : `<button data-a="next" class="primary"${loading ? " disabled" : ""}>Next</button>`}</div>`;
+      ${last ? (APP ? `<button data-a="mine" class="primary">Set up my network</button>` : "") : `<button data-a="next" class="primary"${loading ? " disabled" : ""}>Next</button>`}</div>`;
     card.querySelector('[data-a="end"]').onclick = end;
     card.querySelector('[data-a="back"]')?.addEventListener("click", () => show(i - 1));
     card.querySelector('[data-a="next"]')?.addEventListener("click", () => show(i + 1));
-    if (!loading && !auto) card.querySelector(last ? '[data-a="end"]' : '[data-a="next"]').focus({ preventScroll: true });
+    card.querySelector('[data-a="mine"]')?.addEventListener("click", () => webkit.messageHandlers.strayline.postMessage({ action: "addNetwork" }));
+    if (!loading && !auto) card.querySelector(last ? (APP ? '[data-a="mine"]' : '[data-a="end"]') : '[data-a="next"]').focus({ preventScroll: true });
   }
 
   document.addEventListener("keydown", (e) => { if (card && e.key === "Escape") end(); });
@@ -81,7 +84,7 @@
   document.querySelector("header nav").appendChild(btn);
 
   // Start on step 1 once the console has loaded, unless the link opens a specific incident.
-  if (!location.hash.includes("/")) (async () => {
+  if (APP ? APP.autostart : !location.hash.includes("/")) (async () => {
     for (let t = 0; t < 50 && !document.querySelector("#view .stats"); t++) await new Promise((r) => setTimeout(r, 100));
     if (i < 0) show(0, true);
   })();
