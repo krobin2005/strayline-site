@@ -60,7 +60,7 @@
   const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: 0.12 });
   document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
 
-  SL.initConsole();
+  if (SL.initConsole) SL.initConsole();
   if (SL.initMap) SL.initMap();
   SL.film = film;
 })();

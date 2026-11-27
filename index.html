@@ -70,7 +70,6 @@
         <p class="eyebrow">02 · Two models, one line</p>
         <h2>One model learns the attacks we know. The other learns only what normal looks like.</h2>
         <p>The classifier catches known families. Anomaly detectors learn what normal looks like on <em>your</em> network, from your own logs, and flag anything that strays from it, whether or not it has a name.</p>
-        <p class="dim">Some attacks hug the line and slip past both. So we measure exactly which.</p>
       </article>
     </div>
 
@@ -97,8 +96,8 @@
         <p class="eyebrow">05 · Rank, then let agents read</p>
         <p class="big"><b>19</b> <span class="ok">3 / 3</span></p>
         <h2>escalated, with the real intrusion at top priority.</h2>
-        <p>A ranking step sends only 75 incidents to the AI: the 50 largest and 25 quiet ones. The triage agent escalates 19. All 3 top-priority escalations were the real intrusion: a compromised machine sweeping the network.</p>
-        <p class="dim">9 AI calls, about $0.30 for the whole day; sending the AI every incident took 133 calls. Agents saw pseudonymized hosts and no labels. On screen: every incident sent to the AI, plus a sample of the 1,176 held back.</p>
+        <p>A ranking step keeps a short list of 75 incidents: the 50 largest and 25 quiet ones. An AI read them and escalated 19; all 3 top-priority escalations were the real intrusion, a compromised machine sweeping the network.</p>
+        <p class="dim">On screen: every incident on the short list, plus a sample of the 1,176 held back. Hosts were pseudonymized.</p>
       </article>
     </div>
   </div>
@@ -185,47 +184,14 @@
   </div>
 </section>
 
-<!-- ───────── Live console ───────── -->
-<section class="sec" id="console">
-  <header class="sec-head reveal">
-    <p class="eyebrow">A campus-sized day, replayed</p>
-    <h2>6.5 million connections in. The real intrusion at the top.</h2>
-    <p>An earlier version of the console replaying a real Strayline v1 day on a loop: the 75 incidents the ranking sent to the AI, out of 1,251. Every incident card, triage decision and investigator report below is what the agents actually wrote. Click any incident to inspect it.</p>
-  </header>
-
-  <div class="con reveal" id="con">
-    <div class="con-bar">
-      <span class="dots"><i></i><i></i><i></i></span>
-      <strong>Strayline Console</strong>
-      <span class="tag">concept</span>
-      <span class="tag tag-blue">replay · v1 · a network it was not trained on · 2% false alarms</span>
-      <span class="clock" id="con-clock">13:48:41</span>
-    </div>
-    <div class="con-stats" id="con-stats"></div>
-    <div class="con-body">
-      <div class="con-queue">
-        <div class="pane-head"><span>Sent to the AI</span><span id="q-count">0 / 75</span></div>
-        <ol id="q"></ol>
-      </div>
-      <div class="con-detail" id="detail" aria-live="off"></div>
-    </div>
-    <div class="con-foot">
-      <div class="prog"><i id="con-prog"></i></div>
-      <span id="con-status">replaying</span>
-      <button class="link" id="con-toggle" type="button">Pause</button>
-    </div>
-  </div>
-  <p class="fine center">Hosts are pseudonymized. Ground truth was joined only after the agents finished.</p>
-</section>
-
 <!-- ───────── How it works ───────── -->
 <section class="sec" id="how">
   <header class="sec-head reveal">
     <p class="eyebrow">How it works</p>
-    <h2>A cheap detector on every flow. Agents only on incidents.</h2>
+    <h2>A cheap detector on every connection. AI only where a person will look.</h2>
   </header>
   <ol class="pipe reveal">
-    <li><h4>Logs</h4><p>The connection logs networks already keep (Zeek or NetFlow): timing, ports, byte and packet counts, TCP flags. No payloads, no packet capture.</p></li>
+    <li><h4>Logs</h4><p>The connection logs many networks already keep (Zeek): timing, ports, byte and packet counts, TCP flags. No payloads, no packet capture.</p></li>
     <li><h4>Detector</h4><p>A classifier for known attacks, plus anomaly detectors that learn your network's normal from its first days of logs. Alert lines reset daily to hold your false-alarm budget.</p></li>
     <li><h4>Incidents</h4><p>Alerts are grouped per host. Two queues pick what's worth a look: the largest incidents, plus small ones that only the anomaly detectors catch.</p></li>
     <li><h4>Investigate</h4><p>Strayline gathers the evidence on a device and an AI writes the case report: verdict, what happened, what to do next. By default it's the AI built into the Mac, so nothing leaves it.</p></li>
@@ -239,7 +205,6 @@
       <li>The app runs on Apple Silicon Macs only for now. Sites that keep their Zeek logs on a Linux server can run the same engine from the command line there; a packaged server version is next.</li>
       <li>If a device is already infected during setup, Strayline can learn the infection as normal. It now warns when one device dominates setup traffic and stops flagged devices from shaping tomorrow's normal, which brought the infected device back to #1, but setup on a known-quiet week is still best.</li>
       <li>Quiet intrusions are caught poorly: about 20% of infiltration connections on the new network.</li>
-      <li>Hiding one family at a time only tests attacks that already exist in the data. Some families are tiny (36 infiltration flows in 2017), so treat their rates as indicative.</li>
       <li>The lab classifier alone does not transfer to new networks. Strayline depends on learning each network's own normal traffic.</li>
     </ul>
   </div>
@@ -255,7 +220,7 @@
     <div class="bio">
       <h3>Kyle Robin</h3>
       <p class="role">Founder · research and engineering</p>
-      <p>Sophomore at Bates College studying Digital and Computational Studies, and lead of AI research in Professor Jason Castro's lab. Designed and built Strayline's detectors, the leave-one-family-out experiments behind the catchability map, and the agent layer.</p>
+      <p>Sophomore at Bates College studying Digital and Computational Studies, and lead of AI research in Professor Jason Castro's lab. Designed and built Strayline's detectors, the AI investigator and the Mac app.</p>
       <div class="cta-row">
         <a class="btn" href="https://www.linkedin.com/in/kyle-robin-931415425" target="_blank" rel="noopener">LinkedIn</a>
         <a class="btn btn-ghost" href="https://krobin2005.github.io/myportfolio" target="_blank" rel="noopener">Portfolio</a>
@@ -279,9 +244,8 @@
   <span>Catching the attacks nobody has seen yet.</span>
 </footer>
 
-<script src="data/replay.js?v=202611231124"></script>
-<script src="js/stream.js?v=202611231124"></script>
-<script src="js/console.js?v=202611231124"></script>
-<script src="js/main.js?v=202611231124"></script>
+<script src="data/replay.js?v=202611262040"></script>
+<script src="js/stream.js?v=202611262040"></script>
+<script src="js/main.js?v=202611262040"></script>
 </body>
 </html>
