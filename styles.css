@@ -335,3 +335,9 @@ html, body { overflow-x: clip; }
 .shots figcaption { font-size: 14px; color: var(--body); line-height: 1.5; }
 .shots figcaption b { color: var(--ink); }
 @media (max-width: 900px) { .shots { grid-template-columns: 1fr; } }
+
+.access { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 24px 28px; margin: 10px 0 14px;
+  border-radius: 10px; background: var(--surface); box-shadow: 0 0 0 1px var(--rule); }
+.access h3 { margin: 0 0 6px; font-size: 18px; }
+.access p { margin: 0; color: var(--body); max-width: 640px; }
+@media (max-width: 700px) { .access { flex-direction: column; align-items: flex-start; } }
