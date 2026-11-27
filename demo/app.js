@@ -12,6 +12,11 @@ const api = async (path, body) => {
 
 let state = { days: [], day: null, rows: [], open: null, tab: "queue" };
 
+// A visible "working" block with a spinner and a running timer, for anything that takes more than a moment.
+const working = (msg, sub = "") => `<div class="working" role="status"><span class="spin"></span><div><b>${msg}</b>
+  <small>${sub ? sub + " · " : ""}<span class="elapsed" data-t0="${Date.now()}">0s</span></small></div></div>`;
+setInterval(() => document.querySelectorAll(".elapsed").forEach((e) => (e.textContent = `${Math.round((Date.now() - +e.dataset.t0) / 1000)}s`)), 1000);
+
 async function loadDays() {
   state.days = await api("/api/days");
   $("#days").innerHTML = `<div class="eyebrow">Days</div>` + (state.days.length ? state.days.map((d) => `
@@ -54,6 +59,7 @@ async function showDay(day) {
   document.querySelectorAll("tbody tr").forEach((tr) => (tr.onclick = () => openIncident(tr.dataset.id)));
   document.querySelectorAll(".inv-row").forEach((b) => (b.onclick = async (e) => {
     e.stopPropagation();
+    b.disabled = true; b.innerHTML = `<span class="spin sm"></span>AI working…`;
     await openIncident(b.dataset.id);
     if (!state.open?.investigation) investigate();
   }));
@@ -66,6 +72,10 @@ function closeDetail() {
 }
 
 async function openIncident(id) {
+  if (state.open?.id !== id) {
+    $("#detail").innerHTML = working("Opening the case…");
+    $("#detail").hidden = false; $("main").classList.add("with-detail");
+  }
   const c = await api(`/api/days/${state.day}/${encodeURIComponent(id)}`);
   state.open = c;
   document.querySelectorAll("tbody tr").forEach((t) => t.classList.toggle("on", t.dataset.id === id));
@@ -143,7 +153,10 @@ function wireInv() {
 
 async function investigate() {
   const box = $("#inv"), c = state.open;
-  box.innerHTML = `<p class="note">Investigating ${esc(c.src)}: gathering its incidents, history and activity, then writing the report (${esc(c.ai?.label || "AI")}, up to a minute)…</p>`;
+  box.innerHTML = working("AI is investigating this device…", `Gathering ${esc(c.src)}'s incidents, history and activity, then writing the report with ${esc(c.ai?.label || "the AI")}. Usually under a minute`);
+  box.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  const rowBtn = document.querySelector(`.inv-row[data-id="${CSS.escape(c.id)}"]`);
+  if (rowBtn) { rowBtn.disabled = true; rowBtn.innerHTML = `<span class="spin sm"></span>AI working…`; }
   try {
     c.investigation = await api("/api/investigate", { day: state.day, id: c.id });
     const cell = document.querySelector(`.inv-row[data-id="${CSS.escape(c.id)}"]`)?.parentElement;
@@ -152,7 +165,9 @@ async function investigate() {
     if (state.open !== c) return;
     box.innerHTML = invHTML(c.investigation, c);
   } catch (e) {
-    box.innerHTML = invHTML(c.investigation, c) + `<p class="note">${esc(e.message)}</p>`;
+    box.innerHTML = invHTML(c.investigation, c) + `<p class="note err-note">${esc(e.message)}</p>`;
+    const rb = document.querySelector(`.inv-row[data-id="${CSS.escape(c.id)}"]`);
+    if (rb) { rb.disabled = false; rb.textContent = "Investigate"; }
   }
   wireInv();
 }
@@ -219,10 +234,10 @@ async function save(label) {
 
 async function askAI() {
   const out = $("#ask-out"), btn = $("#ask-go");
-  btn.disabled = true; out.innerHTML = `<p class="note">Thinking (local model, can take a minute on first use)…</p>`;
+  btn.disabled = true; out.innerHTML = working("AI is thinking…", `Answering from this case's details with ${esc(state.open.ai?.label || "the AI")}`);
   try {
     const r = await api("/api/ask", { day: state.day, id: state.open.id, question: $("#ask-q").value });
-    out.innerHTML = `<div class="answer">${esc(r.text)}</div>${r.model ? `<p class="note">${esc(r.model)} · ${r.seconds}s · nothing left this machine</p>` : ""}`;
+    out.innerHTML = `<div class="answer">${esc(r.text)}</div>${r.model ? `<p class="note">${esc(r.model)} · ${r.seconds}s${state.open.ai?.local === false ? " · sent only this case's summary" : " · nothing left this machine"}</p>` : ""}`;
   } catch (e) { out.innerHTML = `<p class="note">${esc(e.message)}</p>`; }
   btn.disabled = false;
 }

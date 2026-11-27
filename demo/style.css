@@ -98,6 +98,17 @@ details summary { cursor: pointer; margin-top: 8px; }
 .legend { margin-top: 10px; }
 .legend i { display: inline-block; width: 18px; height: 6px; border-radius: 3px; margin: 0 4px 1px 8px; vertical-align: middle; }
 
+.working { display: flex; gap: 12px; align-items: center; padding: 14px 16px; margin: 8px 0; border: 1px solid var(--blue); border-radius: 10px;
+  background: color-mix(in srgb, var(--blue) 7%, var(--card)); }
+.working b { display: block; font-size: 14px; }
+.working small { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+.spin { width: 18px; height: 18px; flex: none; border-radius: 50%; border: 2.5px solid color-mix(in srgb, var(--blue) 25%, transparent);
+  border-top-color: var(--blue); animation: spin .8s linear infinite; display: inline-block; }
+.spin.sm { width: 10px; height: 10px; border-width: 2px; margin-right: 6px; vertical-align: -1px; }
+.inv-row:disabled { opacity: 1; cursor: default; background: color-mix(in srgb, var(--blue) 10%, transparent); color: var(--blue); }
+.err-note { color: var(--red); }
+@keyframes spin { to { transform: rotate(360deg); } }
+
 .demo-bar { font: 12px/1.4 var(--mono); color: var(--muted); background: var(--card); border-bottom: 1px solid var(--line); padding: 6px 20px; }
 .embed .demo-bar { display: none; }
 #ask-go { white-space: nowrap; flex: none; }
