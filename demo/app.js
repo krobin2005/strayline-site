@@ -98,7 +98,7 @@ async function openIncident(id) {
     <div id="quar">${quarHTML(c)}</div>
     <div class="eyebrow" style="margin-top:16px">Ask about this incident</div>
     <div class="ask"><input id="ask-q" placeholder="Is this worth investigating? What would you check first?">
-    <div class="row"><button id="ask-go">Ask local AI</button><span class="note">Not available in this web demo: Ask needs Strayline and its local AI installed on your machine. Use Investigate to see a recorded AI report.</span></div>
+    <div class="row"><button id="ask-go">Ask the AI</button><span class="note">Not available in this web demo: Ask needs the Strayline app on your Mac. Use Investigate to see a recorded AI report.</span></div>
     <div id="ask-out"></div></div>`;
   $("#detail").hidden = false; $("main").classList.add("with-detail");
   $(".close").onclick = closeDetail;
@@ -111,9 +111,15 @@ async function openIncident(id) {
 const VERDICT = { likely_compromised: "Likely compromised", suspicious: "Suspicious", likely_benign: "Likely benign" };
 const REC = { quarantine: "Quarantine it", watch: "Keep watching", close: "Close it" };
 
+function aiNote(c) {
+  const ai = c.ai || { label: "local AI", local: true, on: true };
+  if (!ai.on) return "No AI is set up yet: choose one in Settings › AI.";
+  return ai.local ? `Uses ${esc(ai.label)}. Nothing leaves this machine.` : `Uses ${esc(ai.label)}. Sends only this case's pseudonymized summary, never raw logs or real addresses.`;
+}
+
 function invHTML(inv, c) {
   if (!inv) return `<div class="row"><button id="inv-go" class="qbtn">Investigate this device</button></div>
-    <p class="note">The local AI checks this device's other incidents, its history and (with --logs) everything it did today, then writes a case report. Nothing leaves this machine.</p>`;
+    <p class="note">The AI checks this device's other incidents, its history and everything it did today, then writes a case report. ${aiNote(c)}</p>`;
   const r = inv.report;
   return `<div class="case v-${esc(r.verdict)}">
       <div class="row"><span class="pill verdict">${esc(VERDICT[r.verdict] || r.verdict)}</span><span class="note">${esc(r.confidence)} confidence</span></div>
@@ -137,7 +143,7 @@ function wireInv() {
 
 async function investigate() {
   const box = $("#inv"), c = state.open;
-  box.innerHTML = `<p class="note">Investigating ${esc(c.src)}: gathering its incidents, history and activity, then writing the report (local AI, up to a minute)…</p>`;
+  box.innerHTML = `<p class="note">Investigating ${esc(c.src)}: gathering its incidents, history and activity, then writing the report (${esc(c.ai?.label || "AI")}, up to a minute)…</p>`;
   try {
     c.investigation = await api("/api/investigate", { day: state.day, id: c.id });
     const cell = document.querySelector(`.inv-row[data-id="${CSS.escape(c.id)}"]`)?.parentElement;
