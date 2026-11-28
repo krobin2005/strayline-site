@@ -145,7 +145,7 @@
   <div class="avg platforms reveal">
     <div><b>Mac</b><span>One app for Apple Silicon Macs (macOS 26), with guided setup, the built-in AI option and a Dock badge.</span></div>
     <div><b>Linux</b><span>One install command or Docker Compose on Ubuntu, Debian or RHEL, x86 or ARM. Runs as a service next to Zeek, checks each morning, console behind a login.</span></div>
-    <div><b>Windows</b><span>An installer for Windows 10/11 and Server that reads Zeek logs from a share on your sensor. Console in your browser, daily check in Task Scheduler.</span></div>
+    <div><b>Windows</b><span>Coming next: an installer for Windows 10/11 and Server that reads Zeek logs from a share on your sensor. Console in your browser, daily check in Task Scheduler.</span></div>
   </div>
   <div class="access reveal" id="access">
     <div>
@@ -154,7 +154,7 @@
     </div>
     <a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLSerDkXrrBnWQSikuMld7OXW2HN_gZHTS8qkyjh9gA5aHUESHg/viewform" target="_blank" rel="noopener">Request access</a>
   </div>
-  <p class="fine">Mac: Apple Silicon, macOS 26; the built-in AI option needs Apple Intelligence turned on. Linux: Ubuntu 22.04/24.04, Debian 12/13, RHEL/Rocky 9 or Docker; 8 GB RAM. Windows: 10/11 or Server 2019/2022, x64; the Windows version is the newest and least tested. Every version can use a local model (Ollama) or Claude with your own key for case reports.</p>
+  <p class="fine">Mac: Apple Silicon, macOS 26; the built-in AI option needs Apple Intelligence turned on. Linux: Ubuntu 22.04/24.04, Debian 12/13, RHEL/Rocky 9 or Docker; 8 GB RAM. Windows: 10/11 or Server 2019/2022, x64, coming next. Every version can use a local model (Ollama) or Claude with your own key for case reports.</p>
 </section>
 
 <!-- ───────── Real malware ───────── -->
@@ -226,7 +226,7 @@
     <h3>What this is, honestly</h3>
     <ul>
       <li>Most results come from public datasets: two lab testbeds (CIC-IDS2017 and CSE-CIC-IDS2018), real malware captures (IoT-23) and real Zeek logs (UWF-ZeekData24). The one live test so far is a blind planted-attack test on a home network (all attacks caught, false alarms still too high); a business or school pilot is next.</li>
-      <li>The Linux and Windows versions are new: Linux is tested on Ubuntu and in Docker, Windows not yet on a clean machine. Both are unsigned for now, so the first install shows a warning.</li>
+      <li>The Linux version is new: tested on Ubuntu and in Docker, unsigned for now. The Windows version is not out yet.</li>
       <li>If a device is already infected during setup, Strayline can learn the infection as normal. It now warns when one device dominates setup traffic and stops flagged devices from shaping tomorrow's normal, which brought the infected device back to #1, but setup on a known-quiet week is still best.</li>
       <li>Quiet intrusions are caught poorly: about 20% of infiltration connections on the new network.</li>
       <li>The lab classifier alone does not transfer to new networks. Strayline depends on learning each network's own normal traffic.</li>
