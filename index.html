@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Strayline · The AI security analyst for teams that can't afford one</title>
-<meta name="description" content="Strayline is an AI security analyst for schools and mid-sized companies: it reads the network logs you already keep, finds the device that's acting wrong, investigates it and lets IT cut it off. It's one Mac app that runs on your own machine.">
+<meta name="description" content="Strayline is an AI security analyst for schools and mid-sized companies: it reads the network logs you already keep, finds the device that's acting wrong, investigates it and lets IT cut it off. It runs on your own Mac, Linux server or Windows PC.">
 <meta name="theme-color" content="#F3EEE3">
 <link rel="icon" href="assets/mark.svg" type="image/svg+xml">
 <link rel="stylesheet" href="styles.css?v=202611262048">
@@ -18,7 +18,7 @@
   </a>
   <div class="nav-links">
     <a href="#product">Product</a>
-    <a href="#app">Mac app</a>
+    <a href="#app">Get Strayline</a>
     <a href="#real">Real malware</a>
     <a href="#cost">Cost</a>
     <a href="#how">How it works</a>
@@ -108,14 +108,14 @@
   <header class="sec-head reveal">
     <p class="eyebrow">The product</p>
     <h2>Every morning: a short list, a case report, and an off switch.</h2>
-    <p>Strayline is a Mac app that turns a day of your network's connection logs into the few devices worth a look. Below is its console, live in your browser: five days of traffic from a smart-home network with one device infected by Mirai-style malware.</p>
+    <p>Strayline is an app that turns a day of your network's connection logs into the few devices worth a look. Below is its console, live in your browser: five days of traffic from a smart-home network with one device infected by Mirai-style malware.</p>
   </header>
   <div class="con live reveal">
     <div class="con-bar"><span class="dots"><i></i><i></i><i></i></span><strong>Strayline Console</strong><span class="tag tag-blue">live demo · recorded data</span>
       <a class="live-open" href="demo/#2018-05-13/INC-0001" target="_blank" rel="noopener">Open full screen ↗</a></div>
     <iframe src="demo/?v=202611262039#2018-05-13" title="Strayline console, live demo" loading="lazy"></iframe>
   </div>
-  <p class="fine">Try it: the tour walks you through every feature (hit <b>Next</b>, or <b>Skip</b> to explore on your own). Or open the top case, read its AI case report, then try <b>Quarantine</b>. Pick another day on the left, or label a case. It's the real console running on IoT-23 scenario 1-1; the case reports are the ones the AI wrote on a laptop, and nothing you click is saved. The same demo comes pre-installed in the Mac app.</p>
+  <p class="fine">Try it: the tour walks you through every feature (hit <b>Next</b>, or <b>Skip</b> to explore on your own). Or open the top case, read its AI case report, then try <b>Quarantine</b>. Pick another day on the left, or label a case. It's the real console running on IoT-23 scenario 1-1; the case reports are the ones the AI wrote on a laptop, and nothing you click is saved. The same demo comes pre-installed in every version of Strayline.</p>
   <div class="feature reveal">
     <ol class="flow four">
       <li><h4>1 · Find</h4><p>Detectors learn what normal looks like on <em>your</em> network from its first days of logs, then flag what strays from it. Alerts are grouped per device and ranked, so the list stays short.</p></li>
@@ -127,12 +127,12 @@
   <p class="fine">Guardrail: the AI writes the report, but it can't recommend cutting a device off unless the computed evidence includes at least one strong warning sign. In testing it recommended quarantine for every real attacker and for none of the harmless devices.</p>
 </section>
 
-<!-- ───────── The Mac app ───────── -->
+<!-- ───────── Get Strayline: Mac, Linux, Windows ───────── -->
 <section class="sec" id="app">
   <header class="sec-head reveal">
-    <p class="eyebrow">The Mac app</p>
+    <p class="eyebrow">Get Strayline</p>
     <h2>One download. Point it at your logs. It keeps watch.</h2>
-    <p>Strayline is a single app for Apple Silicon Macs: the detector, the console and the AI all come in the box. Nothing to install alongside it, no account, and your network data never leaves the Mac unless you choose a cloud AI.</p>
+    <p>Run Strayline where your logs already are: on a Mac, on the Linux server next to Zeek, or on a Windows PC that reads the sensor's logs. The detector, the console and the AI come in the box. No account, and your network data never leaves your machine unless you choose a cloud AI.</p>
   </header>
   <div class="shots reveal">
     <figure><img src="assets/app-plan.jpg" alt="Setup: Strayline found 6 days of logs in a folder and recommends which days to learn from and which to check" loading="lazy" width="1600" height="1047">
@@ -142,6 +142,11 @@
     <figure><img src="assets/app-ai.jpg" alt="Settings: choose where the AI that writes case reports runs" loading="lazy" width="1600" height="1047">
       <figcaption><b>Your choice of AI.</b> Case reports are written by the AI built into newer Macs (Apple Intelligence: free, nothing leaves the Mac), by Claude with your own API key (about 1–2¢ a report, sending only a pseudonymized case summary), or by a model you run yourself.</figcaption></figure>
   </div>
+  <div class="avg platforms reveal">
+    <div><b>Mac</b><span>One app for Apple Silicon Macs (macOS 26), with guided setup, the built-in AI option and a Dock badge.</span></div>
+    <div><b>Linux</b><span>One install command or Docker Compose on Ubuntu, Debian or RHEL, x86 or ARM. Runs as a service next to Zeek, checks each morning, console behind a login.</span></div>
+    <div><b>Windows</b><span>An installer for Windows 10/11 and Server that reads Zeek logs from a share on your sensor. Console in your browser, daily check in Task Scheduler.</span></div>
+  </div>
   <div class="access reveal" id="access">
     <div>
       <h3>Private beta: request access</h3>
@@ -149,7 +154,7 @@
     </div>
     <a class="btn" href="https://docs.google.com/forms/d/e/1FAIpQLSerDkXrrBnWQSikuMld7OXW2HN_gZHTS8qkyjh9gA5aHUESHg/viewform" target="_blank" rel="noopener">Request access</a>
   </div>
-  <p class="fine">For Apple Silicon Macs (macOS 26). Case reports with the Mac's built-in AI need Apple Intelligence turned on.</p>
+  <p class="fine">Mac: Apple Silicon, macOS 26; the built-in AI option needs Apple Intelligence turned on. Linux: Ubuntu 22.04/24.04, Debian 12/13, RHEL/Rocky 9 or Docker; 8 GB RAM. Windows: 10/11 or Server 2019/2022, x64; the Windows version is the newest and least tested. Every version can use a local model (Ollama) or Claude with your own key for case reports.</p>
 </section>
 
 <!-- ───────── Real malware ───────── -->
@@ -188,7 +193,7 @@
     <p>Most organizations this size can't hire a security analyst, and the big network-monitoring products are priced for large enterprises. Strayline is built to be affordable from the ground up.</p>
   </header>
   <div class="avg reveal">
-    <div><b>$0</b><span>new hardware. One Mac app that reads the connection logs your network already produces (Zeek).</span></div>
+    <div><b>$0</b><span>new hardware. One app (Mac, Linux or Windows) that reads the connection logs your network already produces (Zeek).</span></div>
     <div><b>~3 min</b><span>to process a full day of a 6.5-million-connection network, on an ordinary laptop</span></div>
     <div><b>$0</b><span>per-use AI fees with the AI built into your Mac. Claude is optional, about 1–2¢ per case report.</span></div>
     <div><b>~20</b><span>cases a day for a person to read instead of 130,000 alerts, so your existing IT staff can keep up</span></div>
@@ -221,7 +226,7 @@
     <h3>What this is, honestly</h3>
     <ul>
       <li>Most results come from public datasets: two lab testbeds (CIC-IDS2017 and CSE-CIC-IDS2018), real malware captures (IoT-23) and real Zeek logs (UWF-ZeekData24). The one live test so far is a blind planted-attack test on a home network (all attacks caught, false alarms still too high); a business or school pilot is next.</li>
-      <li>The app runs on Apple Silicon Macs only for now. Sites that keep their Zeek logs on a Linux server can run the same engine from the command line there; a packaged server version is next.</li>
+      <li>The Linux and Windows versions are new: Linux is tested on Ubuntu and in Docker, Windows not yet on a clean machine. Both are unsigned for now, so the first install shows a warning.</li>
       <li>If a device is already infected during setup, Strayline can learn the infection as normal. It now warns when one device dominates setup traffic and stops flagged devices from shaping tomorrow's normal, which brought the infected device back to #1, but setup on a known-quiet week is still best.</li>
       <li>Quiet intrusions are caught poorly: about 20% of infiltration connections on the new network.</li>
       <li>The lab classifier alone does not transfer to new networks. Strayline depends on learning each network's own normal traffic.</li>
@@ -251,7 +256,7 @@
 <section class="sec cta" id="contact">
   <div class="reveal">
     <h2>Pilot Strayline.</h2>
-    <p>Looking for 2–3 pilot sites: a school, a mid-sized company, or a managed IT provider willing to try it on one client. It's one Mac app: it reads only connection logs, never touches live traffic, and sends nothing outside your network unless you choose a cloud AI. If that's you, or you know who it is, I'd like to talk.</p>
+    <p>Looking for 2–3 pilot sites: a school, a mid-sized company, or a managed IT provider willing to try it on one client. It runs on a Mac, a Linux server or Windows: it reads only connection logs, never touches live traffic, and sends nothing outside your network unless you choose a cloud AI. If that's you, or you know who it is, I'd like to talk.</p>
     <a class="btn" data-contact href="#">Get in touch</a>
   </div>
 </section>
