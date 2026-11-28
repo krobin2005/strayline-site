@@ -166,6 +166,18 @@
     <div><b>~6 s</b><span>per investigation, on a laptop, with nothing sent outside</span></div>
   </div>
   <p class="fine">The 6 cases: three incidents from a port scanner on a 2018 test network, the IoT-23 infected device, and two harmless devices. Full write-up of every capture, including the misses, is available on request.</p>
+
+  <header class="sec-head reveal" style="margin-top:3rem">
+    <p class="eyebrow">Blind test on a live network</p>
+    <h2>Planted attacks it couldn't see coming. All caught.</h2>
+    <p>For four days Strayline watched live traffic on a home network, about 240,000 connections. Three harmless stand-ins for real attacks ran at random times from a sealed schedule: a command-and-control beacon, an internal port sweep and a 400 MB data upload. We also ran an imitation of an AI-driven intrusion: targeted probing, bursts with pauses, small staged uploads.</p>
+  </header>
+  <div class="avg reveal">
+    <div><b>3 / 3</b><span>planted attacks caught, each in the top 3 of that day's list</span></div>
+    <div><b>#1</b><span>rank for the AI-agent-style intrusion</span></div>
+    <div><b>240k</b><span>live connections, learned from one to two days of normal traffic</span></div>
+    <div><b>Next</b><span>fewer false alarms: a quiet day still produced dozens of cases on one busy laptop</span></div>
+  </div>
 </section>
 
 <!-- ───────── Cost ───────── -->
@@ -208,7 +220,7 @@
   <div class="limits reveal">
     <h3>What this is, honestly</h3>
     <ul>
-      <li>Every result comes from public datasets: two lab testbeds (CIC-IDS2017 and CSE-CIC-IDS2018), real malware captures (IoT-23) and real Zeek logs (UWF-ZeekData24). There's no live pilot yet; a blind test with planted attacks on a home network finishes this week, and a business or school pilot is next.</li>
+      <li>Most results come from public datasets: two lab testbeds (CIC-IDS2017 and CSE-CIC-IDS2018), real malware captures (IoT-23) and real Zeek logs (UWF-ZeekData24). The one live test so far is a blind planted-attack test on a home network (all attacks caught, false alarms still too high); a business or school pilot is next.</li>
       <li>The app runs on Apple Silicon Macs only for now. Sites that keep their Zeek logs on a Linux server can run the same engine from the command line there; a packaged server version is next.</li>
       <li>If a device is already infected during setup, Strayline can learn the infection as normal. It now warns when one device dominates setup traffic and stops flagged devices from shaping tomorrow's normal, which brought the infected device back to #1, but setup on a known-quiet week is still best.</li>
       <li>Quiet intrusions are caught poorly: about 20% of infiltration connections on the new network.</li>
